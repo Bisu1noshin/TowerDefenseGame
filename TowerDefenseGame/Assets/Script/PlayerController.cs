@@ -22,4 +22,8 @@ public class PlayerController : MonoBehaviour
 
 
     }
+
+    public void OnExFire(InputAction.CallbackContext context) { 
+
+    }
 }
