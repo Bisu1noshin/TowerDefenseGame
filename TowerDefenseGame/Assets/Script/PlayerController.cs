@@ -44,11 +44,19 @@ public class PlayerController : MonoBehaviour
     public void Shoot(InputAction.CallbackContext context)
     {
         //弾を生成
-        GameObject shot=Instantiate(bulletPrefab);
+        Vector3 v=this.transform.position;
+        Quaternion q=this.transform.rotation;
+        GameObject shot = Instantiate(bulletPrefab, v, q);
+        
 
         //チャージのリセット
         pushing = false;
         cnt_MouseTime = 0;
+    }
+
+    public float GetCharge()
+    {
+        return cnt_MouseTime / maxChargeTime;
     }
     
 }

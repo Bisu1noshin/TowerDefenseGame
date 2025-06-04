@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 1063149989}
   - component: {fileID: 1063149988}
   m_Layer: 0
-  m_Name: oyasiro
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxChargeTime: 5
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 5387533407061757999, guid: 77fef6512c6882146bd104aa3d49fb46, type: 3}
 --- !u!212 &1063149989
 SpriteRenderer:
   m_ObjectHideFlags: 0

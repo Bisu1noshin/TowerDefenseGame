@@ -70,7 +70,7 @@ public abstract class ShotController : MonoBehaviour
 
         // ‚½‚ß‚½’l‚ðŽæ“¾(–¢ŽÀ‘•)
         PlayerController p_ = GameObject.Find("Player").GetComponent<PlayerController>();
-        //chargeValue = p_.
+        chargeValue = p_.GetCharge();
         if (chargeValue >= maxChargep) { 
             chargeValue = maxChargep;
         }
