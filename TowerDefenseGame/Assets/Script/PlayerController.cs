@@ -51,12 +51,14 @@ public class PlayerController : MonoBehaviour
 
         //チャージのリセット
         pushing = false;
-        cnt_MouseTime = 0;
+        // cnt_MouseTime = 0;
     }
 
     public float GetCharge()
     {
-        return cnt_MouseTime / maxChargeTime;
+        float chargeValue = cnt_MouseTime / maxChargeTime;
+        cnt_MouseTime = 0;
+        return chargeValue;
     }
     
 }

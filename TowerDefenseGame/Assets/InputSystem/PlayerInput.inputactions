@@ -544,6 +544,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Title",
+            "id": "18cae9a2-3ed8-461e-b510-a04d684a9ef4",
+            "actions": [
+                {
+                    "name": "YesButton",
+                    "type": "Button",
+                    "id": "bba55676-d0ff-4d9b-8a5e-cbe74279ce4b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "NonButton",
+                    "type": "Button",
+                    "id": "e2bc61f7-92af-4378-85e7-496a85ada813",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "368ce926-1d53-4b62-8f7d-88279ea141cd",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "YesButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8891b06a-ead3-456a-acf6-32a33efa6e72",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NonButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

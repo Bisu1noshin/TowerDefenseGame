@@ -19,7 +19,7 @@ public class GaugeController : MonoBehaviour
 
     public void Start()
     {
-        if(powerSlider != null)
+        if (powerSlider != null)
         {
             powerSlider.minValue = 0f;
             powerSlider.maxValue = maxPower;
@@ -30,16 +30,35 @@ public class GaugeController : MonoBehaviour
 
     public void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            StartCoroutine(Charge());
+            StartCoroutine(ICharge());
         }
         else
         {
-            StopCoroutine(Charge());
+            StopCoroutine(ICharge());
         }
     }
 
+    // 6/9追記
+    IEnumerator ICharge()   //ゲージチャージ
+    {
+        while (isCharing == true)
+        {
+            powerSlider.value += Time.deltaTime * chargeSpeed;
+            yield return null;
+        }
+
+        while (isCharing == false)
+        {
+            powerSlider.value -= Time.deltaTime * chargeSpeed;
+            yield return null;
+        }
+    }
+
+#if false
+    
+    // 元のコード
     IEnumerator Charge()   //ゲージチャージ
     {
         while(isCharing == true)
@@ -54,4 +73,5 @@ public class GaugeController : MonoBehaviour
             yield return null;
         }
     }
+#endif
 }

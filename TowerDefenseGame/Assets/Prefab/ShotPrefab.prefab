@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3096140220417519003}
   - component: {fileID: 6012003733526634356}
-  - component: {fileID: 371912574870005175}
+  - component: {fileID: -3034555879820090155}
   m_Layer: 0
   m_Name: ShotPrefab
   m_TagString: Untagged
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &371912574870005175
+--- !u!114 &-3034555879820090155
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,8 +94,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 5387533407061757999}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36a617bef13b3cd4598dbe8dae928d6f, type: 3}
+  m_Script: {fileID: 11500000, guid: 46ae05edaf28fee438366a291657e057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   shotAtp: 0
-  speed: 3
+  speed: 50
