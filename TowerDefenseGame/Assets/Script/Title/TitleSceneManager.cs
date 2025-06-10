@@ -11,6 +11,7 @@ public class TitleSceneManager : MonoBehaviour
 
     // インスペクター参照不可変数
     private Vector3 moveVec;
+    private bool OnMauseLeft;
 
     private void Awake(){
         inputActions = new PlayerInput();
@@ -32,11 +33,12 @@ public class TitleSceneManager : MonoBehaviour
         transform.position = GetMousePosition();
 
 
+        if (OnMauseLeft == true) { OnMauseLeft = false; }
     }
 
-    public void OnYes(InputAction.CallbackContext context) { 
+    public void OnYes(InputAction.CallbackContext context) {
 
-
+        OnMauseLeft = true;
     }
 
     public void OnNon(InputAction.CallbackContext context) { 
@@ -52,4 +54,6 @@ public class TitleSceneManager : MonoBehaviour
 
         return mouseVec;
     }
+
+    public bool GetOnMauseLeft() { return OnMauseLeft; }
 }
