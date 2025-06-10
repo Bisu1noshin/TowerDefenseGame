@@ -73,6 +73,3 @@ crashlytics-build.properties
 
 # UTF変換マクロ
 *.editorconfig
-
-# 文字コード
-*.ReggaeOne-Regular SDF.asset
