@@ -704,6 +704,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInput.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInput.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Title.enabled, "This will cause a leak and performance issues, PlayerInput.Title.Disable() has not been called.");
     }
 
     public void Dispose()
