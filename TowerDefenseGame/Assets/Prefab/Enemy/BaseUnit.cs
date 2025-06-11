@@ -75,11 +75,16 @@ public abstract class BaseUnit : MonoBehaviour
         if(elementNum >= timers.Count) { return; }
         timers[elementNum] = maxTimers[elementNum];
     }
-    protected virtual void Attack() //UŒ‚‚µ‚½‚±‚Æ‚É‚·‚éˆ—
+    protected virtual void SetAttack() //UŒ‚‚µ‚½‚±‚Æ‚É‚·‚éˆ—
     {
         attackInterval = maxAttackInterval;
         SetTimer(0);
 
+    }
+    public void Attack(int dmg) //Animation‚ÅŒÄ‚Ño‚·—p‚ÌŠÖ”
+    {
+        PlayerController p = GameObject.Find("Player").GetComponent<PlayerController>();
+        //p.Hit(dmg);
     }
     private void OnBecameInvisible()
     {
