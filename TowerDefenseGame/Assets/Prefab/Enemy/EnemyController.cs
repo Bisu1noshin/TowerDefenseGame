@@ -14,15 +14,21 @@ public class EnemyController : BaseUnit
         HP = 10;
         canKB = true;
         attackInterval = 0;
-        maxAttackInterval = 0.4f;
+        maxAttackInterval = 1.0f;
     }
     protected override void UpdateOverrided()
     {
         if (attackRange.CollisionHitPlayer())
         {
-            if(attackInterval <= 0 && TryGetComponent<PlayerController>(out var p))
+            moveVec = Vector3.zero;
+            if(attackInterval <= 0)
             {
-                Attack();
+                if (GameObject.Find("Player").gameObject.TryGetComponent<PlayerController>(out var p))
+                {
+                    Debug.Log("Attack");
+                    SetAttack();
+                }
+                
                 //p.Damage();
             }
             else
@@ -32,14 +38,22 @@ public class EnemyController : BaseUnit
         }
         else
         {
-            anim.SetInteger("State", 1); //歩き
-            moveVec = (Vector2)(GameObject.Find("Player").transform.position - transform.position).normalized;
+            Vector2 dist = (Vector2)(GameObject.Find("Player").transform.position - transform.position);
+            if(dist.magnitude > 1.5f)
+            {
+                moveVec = dist.normalized;
+            }
+            else
+            {
+                moveVec = Vector2.zero;
+            }
+            ChangeAnim(1); //歩き
         }
     }
-    protected override void Attack()
+    protected override void SetAttack()
     {
-        anim.SetInteger("State", 2); //攻撃
-        base.Attack();
+        ChangeAnim(2); //攻撃
+        base.SetAttack();
     }
     protected override void Hit(Vector2 angle, int damage)
     {
@@ -47,7 +61,13 @@ public class EnemyController : BaseUnit
     }
     protected override void KnockBack(Vector2 angle)
     {
-        anim.SetInteger("State", 4); //ノックバック
+        ChangeAnim(4); //ノックバック
         base.KnockBack(angle);
+    }
+    void ChangeAnim(int a) //0を経由させるためだけの処理
+    {
+        if(anim.GetInteger("State") == a) { return; } //アニメーションが同じ場合は変更なし
+        anim.SetInteger("State", 0);
+        anim.SetInteger("State", a);
     }
 }
