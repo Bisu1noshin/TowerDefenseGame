@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Build.Content;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public partial class TitleSceneManager : MonoBehaviour
 {
@@ -11,7 +14,7 @@ public partial class TitleSceneManager : MonoBehaviour
 
     // インスペクター参照不可変数
     private Vector3 moveVec;
-    private bool OnMauseLeft;
+    private bool ChangeSceneFlag;
 
     private void Awake(){
 
@@ -32,6 +35,10 @@ public partial class TitleSceneManager : MonoBehaviour
     public void OnYes(InputAction.CallbackContext context) {
 
         PlayerCnt++;
+        if (ChangeSceneFlag) {
+
+            SceneManager.LoadScene("MainGame");
+        }
     }
 
     public void ExitYes(InputAction.CallbackContext context) {

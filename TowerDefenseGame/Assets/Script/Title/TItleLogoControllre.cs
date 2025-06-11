@@ -51,7 +51,7 @@ public partial class TitleSceneManager : MonoBehaviour
         if (PlayerCnt == -1)
         {
             timeCnt += Time.deltaTime;
-            StartButtonUpData();
+            ChangeSceneFlag = StartButtonUpData();
 
             if (timeCnt >= 20.0f)
             {
@@ -140,7 +140,7 @@ public partial class TitleSceneManager : MonoBehaviour
         }
     }
 
-    private void StartButtonUpData() {
+    private bool StartButtonUpData() {
 
         startLogo.enabled = true;
 
@@ -152,12 +152,16 @@ public partial class TitleSceneManager : MonoBehaviour
         float w = 6.4f;
         float h = -3.67f;
 
-        if (p.x <= x && p.y <= y){
-            if (p.x > w && p.y > h){
+        if (p.x >= x && p.y <= y){
+            if (p.x < w && p.y > h){
 
                 startLogo.color = Color.red;
+                return true;
             }
         }
+
+        startLogo.color = Color.green;
+        return false;
     }
 
     private void SchoolLogoInitialize() {
@@ -180,5 +184,6 @@ public partial class TitleSceneManager : MonoBehaviour
 
         startLogo.enabled = false;
         startLogo.color = Color.green;
+        ChangeSceneFlag = false;
     }
 }
