@@ -7,9 +7,12 @@ public class PlayerController : MonoBehaviour
 {
     PlayerInput inputActions;
     float cnt_MouseTime = 0; //クリックしている時間をカウント
-    [SerializeField] float maxChargeTime = 5.0f; //最大チャージ時間
-    [SerializeField]GameObject bulletPrefab;
+    [SerializeField] const float maxChargeTime = 5.0f; //最大チャージ時間(割合計算に使うためconst)
+    [SerializeField] GameObject bulletPrefab;
     bool pushing = false; //マウスボタンがdown状態かのフラグ
+    [SerializeField] const int maxHP = 50; //最大体力(割合計算に使うためconst)
+    int nowHP = maxHP; //現在体力 初期化はmaxHPで
+    [SerializeField] ParticleSystem Ef_Explosion; //爆発エフェクト
 
     private void Awake()
     {
@@ -30,6 +33,23 @@ public class PlayerController : MonoBehaviour
             cnt_MouseTime += Time.deltaTime;
             if( cnt_MouseTime > maxChargeTime ) { cnt_MouseTime=maxChargeTime; }
         }
+
+        nowHP--;
+
+        //HPが0になったら死亡
+        if (nowHP <= 0)
+        {
+            Instantiate(Ef_Explosion, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
+
+        Debug.Log(nowHP);
+    }
+
+    //攻撃された時の処理
+    public void Hit(int damage_)
+    {
+        nowHP -= damage_;
     }
 
     // 入力イベント
@@ -47,13 +67,13 @@ public class PlayerController : MonoBehaviour
         Vector3 v=this.transform.position;
         Quaternion q=this.transform.rotation;
         GameObject shot = Instantiate(bulletPrefab, v, q);
-        
 
         //チャージのリセット
         pushing = false;
         // cnt_MouseTime = 0;
     }
 
+    //チャージ割合の取得
     public float GetCharge()
     {
         float chargeValue = cnt_MouseTime / maxChargeTime;
@@ -61,4 +81,9 @@ public class PlayerController : MonoBehaviour
         return chargeValue;
     }
     
+    //HP割合の取得
+    public float GetHP()
+    {
+        return nowHP / maxHP;
+    }
 }

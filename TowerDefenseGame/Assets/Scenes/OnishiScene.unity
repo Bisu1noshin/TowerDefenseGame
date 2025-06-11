@@ -245,8 +245,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f17d341037820e8499f141eaa62bf5d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxChargeTime: 5
   bulletPrefab: {fileID: 5387533407061757999, guid: 77fef6512c6882146bd104aa3d49fb46, type: 3}
+  Ef_Explosion: {fileID: 3592096766102981422, guid: 1537edb4f2e28ce46a317139f31b9e86, type: 3}
 --- !u!212 &1063149989
 SpriteRenderer:
   m_ObjectHideFlags: 0
