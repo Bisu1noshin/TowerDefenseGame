@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TitleSceneManager : MonoBehaviour
+public partial class TitleSceneManager : MonoBehaviour
 {
     PlayerInput inputActions;
 
@@ -14,34 +14,37 @@ public class TitleSceneManager : MonoBehaviour
     private bool OnMauseLeft;
 
     private void Awake(){
+
         inputActions = new PlayerInput();
 
         // 入力イベントをバインド
-        inputActions.Title.YesButton.started += OnYes;
-        inputActions.Title.NonButton.started += OnNon;
+        {
+            inputActions.Title.YesButton.started += OnYes;
+            inputActions.Title.YesButton.canceled += ExitYes;
+            inputActions.Title.NonButton.started += OnNon;
+            inputActions.Title.NonButton.canceled += ExitNon;
+        }
 
+        // インプットシステムを有効化
         inputActions.Enable();
-    }
-
-    private void Start(){
-
-    }
-
-    private void Update(){
-
-        // マウスの位置に座標を移動
-        transform.position = GetMousePosition();
-
-
-        if (OnMauseLeft == true) { OnMauseLeft = false; }
     }
 
     public void OnYes(InputAction.CallbackContext context) {
 
-        OnMauseLeft = true;
+        PlayerCnt++;
+    }
+
+    public void ExitYes(InputAction.CallbackContext context) {
+
+        
     }
 
     public void OnNon(InputAction.CallbackContext context) { 
+
+
+    }
+
+    public void ExitNon(InputAction.CallbackContext context) {
 
 
     }
@@ -54,6 +57,4 @@ public class TitleSceneManager : MonoBehaviour
 
         return mouseVec;
     }
-
-    public bool GetOnMauseLeft() { return OnMauseLeft; }
 }

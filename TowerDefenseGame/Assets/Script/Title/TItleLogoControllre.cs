@@ -5,11 +5,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TItleLogoControllre : MonoBehaviour
+public partial class TitleSceneManager : MonoBehaviour
 {
     [SerializeField] MaskableGraphic[] titleLogo;
     [SerializeField] MaskableGraphic schoolLogo;
-    [SerializeField] TitleSceneManager tsm;
+    [SerializeField] MaskableGraphic startLogo;
 
     private int PlayerCnt;
     private float timeCnt;
@@ -17,33 +17,28 @@ public class TItleLogoControllre : MonoBehaviour
     private void Start()
     {
         // 学校ロゴの初期化
-        {
-            schoolLogo.color = new Color(255, 255, 255, 0);
-            schoolLogo.enabled = true;
-        }
+        SchoolLogoInitialize();
 
         // タイトルロゴの初期化
-        {
-            for (int i = 0; i < titleLogo.Length; i++)
-            {
+        TitleLogoInitialize();
 
-                Vector3 vec = new (16.13888931274414f, 1.7222223281860352f, 90);
-                titleLogo[i].rectTransform.position = vec;
-            }
-        }
+        // スタートボタン初期化
+        StartButtonInitialize();
 
+        // メンバー変数の初期化
         PlayerCnt = 0;
+        timeCnt = 0;
     }
 
     private void Update()
     {
-        if (tsm.GetOnMauseLeft()) {
+        // マウスの位置に座標を移動
+        transform.position = GetMousePosition();
 
-            PlayerCnt++;
-        }
-
+        // ロゴの遷移
         if (PlayerCnt >= 0) {
 
+            TitleLogoInitialize();
             SchoolLogoUpData();
         }
         else
@@ -52,33 +47,119 @@ public class TItleLogoControllre : MonoBehaviour
         }
     }
 
-    private void TitleLogoUpData() { 
+    private void TitleLogoUpData() {
 
+        if (PlayerCnt == -1)
+        {
+            timeCnt += Time.deltaTime;
 
-        if (PlayerCnt == -1){
+            if (timeCnt >= 20.0f)
+            {
+                PlayerCnt++;
+                timeCnt = 0;
+                return;
+            }
 
-            for (int i = 0; i < titleLogo.Length; i++)
+            return;
+        }
+
+        Vector3 toVec = new(-0.8f, 1.7222223281860352f, 90);
+
+        int num = PlayerCnt * -1 % 2;
+        int arr = PlayerCnt * -1 / 2;
+
+        if (num == 1)
+        {
+
+            if (MoveTitleUI(titleLogo[arr - 1], toVec))
             {
 
-                Vector3 vec = new(-0.8f, 1.7222223281860352f, 90);
-                titleLogo[i].rectTransform.position = vec;
+                PlayerCnt++;
+                return;
             }
         }
+        else
+        {
+
+            SetTitleUI(titleLogo[arr - 1], toVec);
+            timeCnt += Time.deltaTime;
+
+            if (timeCnt >= 1.0f)
+            {
+
+                PlayerCnt++;
+                timeCnt = 0;
+                return;
+            }
+        }
+    }
+
+    private bool MoveTitleUI(MaskableGraphic ui_,Vector3 vec) {
+
+        if (ui_.transform.position.x == vec.x) { 
+
+            return true;
+        }
+
+        float speed = 5.0f;
+
+        // 指定された座標に移動
+        ui_.transform.position = Vector3.MoveTowards(
+            ui_.transform.position,
+            vec,
+            speed * Time.deltaTime
+            ) ;
+
+        return false;
+    }
+
+    private void SetTitleUI(MaskableGraphic ui_, Vector3 vec) {
+
+        ui_.transform.position = vec;
     }
 
     private void SchoolLogoUpData(){ 
 
         if (schoolLogo.color.a >= 1) {
 
-            PlayerCnt = -8;
+            PlayerCnt = -7;
             schoolLogo.color = new Color(255, 255, 255, 0);
         }
 
-        schoolLogo.color += new Color(0f, 0f, 0f, 1f / 256f);
+        schoolLogo.color += new Color(0f, 0f, 0f, 1f / 256f / 3f);
 
         if (PlayerCnt == 1) {
 
             schoolLogo.color = new Color(255, 255, 255, 255);
         }
+    }
+
+    private void StartButtonUpData() {
+
+        startLogo.enabled = true;
+
+        // 接触処理
+        
+    }
+
+    private void SchoolLogoInitialize() {
+
+        schoolLogo.color = new Color(255, 255, 255, 0);
+        schoolLogo.enabled = true;
+    }
+
+    private void TitleLogoInitialize() {
+
+        for (int i = 0; i < titleLogo.Length; i++)
+        {
+
+            Vector3 vec = new(16.13888931274414f, 1.7222223281860352f, 90);
+            titleLogo[i].rectTransform.position = vec;
+        }
+    }
+
+    private void StartButtonInitialize() {
+
+        startLogo.enabled = false;
     }
 }
