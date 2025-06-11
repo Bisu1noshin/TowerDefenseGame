@@ -32,6 +32,9 @@ public class PlayerController : MonoBehaviour
             //チャージ
             cnt_MouseTime += Time.deltaTime;
             if( cnt_MouseTime > maxChargeTime ) { cnt_MouseTime=maxChargeTime; }
+
+            GameObject PowerBer = GameObject.Find("Canvas");
+            PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(cnt_MouseTime / maxChargeTime);
         }
 
         //HPが0になったら死亡
@@ -40,8 +43,6 @@ public class PlayerController : MonoBehaviour
             Instantiate(Ef_Explosion, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
-
-        Debug.Log(nowHP);
     }
 
     //攻撃された時の処理
@@ -68,7 +69,9 @@ public class PlayerController : MonoBehaviour
 
         //チャージのリセット
         pushing = false;
-        // cnt_MouseTime = 0;
+        //cnt_MouseTime = 0;
+        GameObject PowerBer = GameObject.Find("Canvas");
+        PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(0);
     }
 
     //チャージ割合の取得

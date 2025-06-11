@@ -18,7 +18,8 @@ public class PowerBar : MonoBehaviour
         //最初はパワーを０で初期化
         currentPower = 0f;
 
-        UpdatePowerBar();
+        //UpdatePowerBar();
+        powerFillImage.fillAmount = 0;
     }
 
     void Update()
@@ -26,18 +27,18 @@ public class PowerBar : MonoBehaviour
         //マウス左クリックでチャージ
         if (Input.GetMouseButton(0))
         {
-            ChargePower();
+            //ChargePower();
         }
 
         //マウスボタン離れたら発射
         if (Input.GetMouseButtonUp(0))
         {
-            Shot();
+            //Shot();
 
         }
     }
 
-    void ChargePower()      //パワーチャージ
+    /*void ChargePower()      //パワーチャージ
     {
         if (currentPower < maxPower)
         {
@@ -51,9 +52,14 @@ public class PowerBar : MonoBehaviour
         }
 
         UpdatePowerBar();
+    }*/
+
+    public void SetFillAmount(float per_)
+    {
+        powerFillImage.fillAmount = per_;
     }
 
-    void UpdatePowerBar()       //パワーバー状態Update
+    /*void UpdatePowerBar()       //パワーバー状態Update
     {
         //Fill Amountは0～1の間
         float fillAmaount = currentPower / maxPower;
@@ -75,5 +81,5 @@ public class PowerBar : MonoBehaviour
     {
         currentPower = 0f;
         UpdatePowerBar();
-    }
+    }*/
 }
