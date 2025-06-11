@@ -14,17 +14,21 @@ public abstract class BaseUnit : MonoBehaviour
     protected float attackInterval;       //UŒ‚ŠÔŠu
     protected float maxAttackInterval;    //Å‘åUŒ‚ŠÔŠu
     [SerializeField]GameObject bar;
+    protected bool isAlive;
 
     // Start is called before the first frame update
     void Start()
     {
+        isAlive = true;
         Setup();
     }
 
     // Update is called once per frame
     void Update()
     {
+
         transform.position += (Vector3)moveVec * Time.deltaTime;
+        if (!isAlive) { return; }
         if(attackInterval > 0) { attackInterval -=  Time.deltaTime; }
         if (!DecreaseTimer()) { return; }
         UpdateOverrided();
@@ -48,10 +52,6 @@ public abstract class BaseUnit : MonoBehaviour
     protected virtual void KnockBack(Vector2 angle)
     {
         moveVec = angle.normalized * 2.0f;
-        if(HP <= 0)
-        {
-            Kill();
-        }
     }
     protected virtual void Kill()
     {
