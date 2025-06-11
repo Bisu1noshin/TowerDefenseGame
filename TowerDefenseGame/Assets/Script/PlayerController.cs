@@ -34,8 +34,6 @@ public class PlayerController : MonoBehaviour
             if( cnt_MouseTime > maxChargeTime ) { cnt_MouseTime=maxChargeTime; }
         }
 
-        nowHP--;
-
         //HPが0になったら死亡
         if (nowHP <= 0)
         {
