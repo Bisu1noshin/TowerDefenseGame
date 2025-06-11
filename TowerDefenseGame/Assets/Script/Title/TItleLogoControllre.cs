@@ -37,8 +37,7 @@ public partial class TitleSceneManager : MonoBehaviour
 
         // ÉçÉSÇÃëJà⁄
         if (PlayerCnt >= 0) {
-
-            TitleLogoInitialize();
+            
             SchoolLogoUpData();
         }
         else
@@ -52,6 +51,7 @@ public partial class TitleSceneManager : MonoBehaviour
         if (PlayerCnt == -1)
         {
             timeCnt += Time.deltaTime;
+            StartButtonUpData();
 
             if (timeCnt >= 20.0f)
             {
@@ -118,7 +118,13 @@ public partial class TitleSceneManager : MonoBehaviour
         ui_.transform.position = vec;
     }
 
-    private void SchoolLogoUpData(){ 
+    private void SchoolLogoUpData(){
+
+        if (PlayerCnt == 0)
+        {
+            TitleLogoInitialize();
+            StartButtonInitialize();
+        }
 
         if (schoolLogo.color.a >= 1) {
 
@@ -139,7 +145,19 @@ public partial class TitleSceneManager : MonoBehaviour
         startLogo.enabled = true;
 
         // ê⁄êGèàóù
-        
+
+        Vector3 p = transform.position;
+        float x = 2.2f;
+        float y = -2.32f;
+        float w = 6.4f;
+        float h = -3.67f;
+
+        if (p.x <= x && p.y <= y){
+            if (p.x > w && p.y > h){
+
+                startLogo.color = Color.red;
+            }
+        }
     }
 
     private void SchoolLogoInitialize() {
@@ -161,5 +179,6 @@ public partial class TitleSceneManager : MonoBehaviour
     private void StartButtonInitialize() {
 
         startLogo.enabled = false;
+        startLogo.color = Color.green;
     }
 }
