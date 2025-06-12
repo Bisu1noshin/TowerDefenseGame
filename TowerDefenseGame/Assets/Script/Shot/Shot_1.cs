@@ -1,12 +1,12 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Shot_1 : ShotController
 {
-    // ƒCƒ“ƒXƒyƒNƒ^[QÆ‰Â
-    [SerializeField] private int shotAtp;   // ’e‚ÌUŒ‚—Í
-    [SerializeField] private float speed;   // ’e‚Ì‘¬‚³
+    // ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼å‚ç…§å¯
+    [SerializeField] private int shotAtp;   // å¼¾ã®æ”»æ’ƒåŠ›
+    [SerializeField] private float speed;   // å¼¾ã®é€Ÿã•
 
     protected override void SetShotAtp()
     {
