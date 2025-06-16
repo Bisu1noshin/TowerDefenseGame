@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,52 +9,33 @@ public class EnemyController : BaseUnit
     StateMachine<StateType, StateTrigger> sm;
     Animator anim;
     AttackRange_Script attackRange;
+    float deadTimer;
+    Bar_Enemy_Controller bar;
     protected override void Setup()
     {
         sm = new StateMachine<StateType, StateTrigger>(StateType.Stand);
         attackRange = GetComponentInChildren<AttackRange_Script>();
         anim = GetComponent<Animator>();
+        bar = GetComponentInChildren<Bar_Enemy_Controller>();
         maxHP = 10;
         HP = 10;
         canKB = true;
+        kbTime = 4;
         attackInterval = 0;
-        maxAttackInterval = 1.0f;
+        maxAttackInterval = 2.0f;
+        deadTimer = 1.0f;
         SMSetup();
     }
     protected override void UpdateOverrided()
     {
-        if (attackRange.CollisionHitPlayer())
+        if(sm.GetState() != StateType.Down)
         {
-            moveVec = Vector3.zero;
-            if(attackInterval <= 0)
-            {
-                if (GameObject.Find("Player").gameObject.TryGetComponent<PlayerController>(out var p))
-                {
-                    SetAttack();
-                }
-                
-                //p.Damage();
-            }
-            else
-            {
-                sm.ExecuteTrigger(StateTrigger.Stand);
-            }
+            bar.SetPosition(transform.position + Vector3.up * 0.5f);
+            bar.FillBar((float)HP / maxHP);
         }
-        else
+        if(sm.GetState() == StateType.Hit && AllTimerIs0())
         {
-            if(GameObject.Find("Player") != null)
-            {
-                Vector2 dist = (Vector2)(GameObject.Find("Player").transform.position - transform.position);
-                if(dist.magnitude > 1.5f)
-                {
-                    moveVec = dist.normalized;
-                }
-                else
-                {
-                    moveVec = Vector2.zero;
-                }
-                sm.ExecuteTrigger(StateTrigger.Walk);
-            }
+            IsDead();
         }
         sm.Update(Time.deltaTime);
     }
@@ -63,7 +44,7 @@ public class EnemyController : BaseUnit
         sm.ExecuteTrigger(StateTrigger.Attack);
         base.SetAttack();
     }
-    protected override void Hit(Vector2 angle, int damage)
+    public override void Hit(Vector2 angle, int damage)
     {
         base.Hit(angle, damage);
     }
@@ -72,19 +53,13 @@ public class EnemyController : BaseUnit
         sm.ExecuteTrigger(StateTrigger.Hit);
         base.KnockBack(angle);
     }
-    void ChangeAnim(int a) //0‚ğŒo—R‚³‚¹‚é‚½‚ß‚¾‚¯‚Ìˆ—
+    void SMSetup() //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚¿ãƒ¼ç®¡ç†ï¼¿åˆæœŸåŒ–
     {
-        if(anim.GetInteger("State") == a) { return; } //ƒAƒjƒ[ƒVƒ‡ƒ“‚ª“¯‚¶ê‡‚Í•ÏX‚È‚µ
-        anim.SetInteger("State", 0);
-        anim.SetInteger("State", a);
-    }
-    void SMSetup() //ƒAƒjƒ[ƒ^[ŠÇ—Q‰Šú‰»
-    {
-        sm.SetupState(StateType.Stand, () => anim.Play("Stand", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
-        sm.SetupState(StateType.Walk, () => anim.Play("Walk", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
+        sm.SetupState(StateType.Stand, () => anim.Play("Stand", 0, 0), () =>NullUpdate(), deltaTime => IdleUpdate());
+        sm.SetupState(StateType.Walk, () => anim.Play("Walk", 0, 0), () => NullUpdate(), deltaTime => WalkUpdate());
         sm.SetupState(StateType.Attack, () => anim.Play("Attack", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
-        sm.SetupState(StateType.Hit, () => anim.Play("Hit", 0, 0), () => IsDead(), deltaTime => NullUpdate());
-        sm.SetupState(StateType.Down, ()=> StartDown(), ()=> Kill(), deltaTime => NullUpdate());
+        sm.SetupState(StateType.Hit, () => anim.Play("Hit_L", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
+        sm.SetupState(StateType.Down, ()=> StartDown(), ()=> NullUpdate(), deltaTime => DeadUpdate());
 
         sm.AddTransition(StateType.Stand, StateType.Walk, StateTrigger.Walk);
         sm.AddTransition(StateType.Stand, StateType.Attack, StateTrigger.Attack);
@@ -104,16 +79,65 @@ public class EnemyController : BaseUnit
     {
         //pass
     }
-    void StartDown() //¸“V
+    void IdleUpdate()
     {
-        GetComponent<BoxCollider2D>().enabled = false;  //¸“V‚Ì€”õ@FX‚È‹@”\‚ğOFF‚É‚·‚é
+        moveVec = Vector3.zero;
+        if (attackRange.CollisionHitPlayer())
+        {
+            if(attackInterval <= 0)
+            {
+                SetAttack();
+            }
+            else
+            {
+                if (!sm.Equals(StateTrigger.Stand))
+                {
+                    sm.ExecuteTrigger(StateTrigger.Stand);
+                }
+            }
+        }
+        else
+        {
+            sm.ExecuteTrigger(StateTrigger.Walk);
+        }
+    }
+    void WalkUpdate()
+    {
+        if (attackRange.CollisionHitPlayer())
+        {
+            sm.ExecuteTrigger(StateTrigger.Stand);
+        }
+        else
+        {
+            if (GameObject.Find("Player") != null)
+            {
+                Vector2 dist = (Vector2)(GameObject.Find("Player").transform.position - transform.position);
+                if (dist.magnitude > 1.5f)
+                {
+                    moveVec = dist.normalized;
+                }
+                else
+                {
+                    moveVec = Vector2.zero;
+                }
+            }
+        }
+    }
+    void StartDown() //æ˜‡å¤©
+    {
+        GetComponent<BoxCollider2D>().enabled = false;  //æ˜‡å¤©ã®æº–å‚™ã€€è‰²ã€…ãªæ©Ÿèƒ½ã‚’OFFã«ã™ã‚‹
         GetComponentInChildren<AttackRange_Script>().enabled = false;
         GetComponentInChildren<BoxCollider2D>().enabled = false;
         GetComponent<SpriteRenderer>().color = Color.gray;
         anim.Play("Down", 0, 0);
     }
-    void IsDead() //ƒmƒbƒNƒoƒbƒNŒã‚Ì€–S”»’è
+    public void EndAttack()
     {
+        sm.ExecuteTrigger(StateTrigger.Stand);
+    }
+    void IsDead() //ãƒãƒƒã‚¯ãƒãƒƒã‚¯å¾Œã®æ­»äº¡åˆ¤å®š
+    {
+        moveVec = Vector3.zero;
         if(this.HP <= 0)
         {
             sm.ExecuteTrigger(StateTrigger.Down);
@@ -122,5 +146,11 @@ public class EnemyController : BaseUnit
         {
             sm.ExecuteTrigger(StateTrigger.Stand);
         }
+    }
+    void DeadUpdate()
+    {
+        moveVec = new Vector3(0, 1.0f, 0);
+        deadTimer -= Time.deltaTime;
+        if (deadTimer <= 0) { Destroy(gameObject); }
     }
 }

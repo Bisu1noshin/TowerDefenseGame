@@ -1,19 +1,18 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class BaseUnit : MonoBehaviour
 {
-    protected int HP;     //Œ»İHP
-    protected int maxHP;  //Å‘åHP
-    protected bool canKB; //ƒmƒbƒNƒoƒbƒN‚ª‚Å‚«‚éƒIƒuƒWƒFƒNƒg‚©”Û‚©
-    protected int kbTime; //ƒmƒbƒNƒoƒbƒN‰ñ”
-    [SerializeField]protected Vector2 moveVec; //ˆê•bŠÔ‚ÅˆÚ“®‚·‚éÀ•W—Ê‚ğ“ü‚ê‚é
-    List<float> timers = new List<float> { 0, 0 };             //s“®•s”\ƒ^ƒCƒ}[ŠÇ——p@1”Ô–ÚFUŒ‚Š—vŠÔ@2”Ô–ÚFƒmƒbƒNƒoƒbƒNŠÔ
-    List<float> maxTimers = new List<float> { 0.5f, 0.2f };    //s“®•s”\ƒ^ƒCƒ}[ŠÇ——p@1”Ô–ÚFÅ‘åUŒ‚ŠÔ@2”Ô–ÚFÅ‘åƒmƒbƒNƒoƒbƒNŠÔ
-    protected float attackInterval;       //UŒ‚ŠÔŠu
-    protected float maxAttackInterval;    //Å‘åUŒ‚ŠÔŠu
-    [SerializeField]GameObject bar;
+    [SerializeField]protected int HP;     //ç¾åœ¨HP
+    protected int maxHP;  //æœ€å¤§HP
+    protected bool canKB; //ãƒãƒƒã‚¯ãƒãƒƒã‚¯ãŒã§ãã‚‹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹å¦ã‹
+    protected int kbTime; //ãƒãƒƒã‚¯ãƒãƒƒã‚¯å›æ•°
+    protected Vector2 moveVec; //ä¸€ç§’é–“ã§ç§»å‹•ã™ã‚‹åº§æ¨™é‡ã‚’å…¥ã‚Œã‚‹
+    List<float> timers = new() { 0, 0 };             //è¡Œå‹•ä¸èƒ½ã‚¿ã‚¤ãƒãƒ¼ç®¡ç†ç”¨ã€€1ç•ªç›®ï¼šæ”»æ’ƒæ‰€è¦æ™‚é–“ã€€2ç•ªç›®ï¼šãƒãƒƒã‚¯ãƒãƒƒã‚¯æ™‚é–“
+    List<float> maxTimers = new() { 0.5f, 0.2f };    //è¡Œå‹•ä¸èƒ½ã‚¿ã‚¤ãƒãƒ¼ç®¡ç†ç”¨ã€€1ç•ªç›®ï¼šæœ€å¤§æ”»æ’ƒæ™‚é–“ã€€2ç•ªç›®ï¼šæœ€å¤§ãƒãƒƒã‚¯ãƒãƒƒã‚¯æ™‚é–“
+    protected float attackInterval;       //æ”»æ’ƒé–“éš”
+    protected float maxAttackInterval;    //æœ€å¤§æ”»æ’ƒé–“éš”
     protected bool isAlive;
 
     // Start is called before the first frame update
@@ -38,14 +37,14 @@ public abstract class BaseUnit : MonoBehaviour
 
     }
     protected abstract void UpdateOverrided();
-    protected virtual void Hit(Vector2 angle, int damage) //’e‚Ì”­ËŠp“x‚Æƒ_ƒ[ƒW‚ğŒ©‚é
+    public virtual void Hit(Vector2 angle, int damage) //å¼¾ã®ç™ºå°„è§’åº¦ã¨ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’è¦‹ã‚‹
     {
         HP -= damage;
 
-        float HPper = ((float)HP / maxHP) * kbTime; //ƒmƒbƒNƒoƒbƒNˆ—
-        if(HPper == (int)HPper && canKB)
+        float HPper = ((float)HP / maxHP) * kbTime; //ãƒãƒƒã‚¯ãƒãƒƒã‚¯å‡¦ç†
+        if(HPper >= (int)HPper && HPper <= (int)HPper + 1 && canKB)
         {
-            KnockBack(angle);
+            KnockBack(angle); 
         }
         
     }
@@ -70,21 +69,33 @@ public abstract class BaseUnit : MonoBehaviour
         }
         return all0;
     }
-    protected void SetTimer(int elementNum) //timers‚Ìw’è‚µ‚½”Ô†‚ğ‘Î‰‚µ‚½Å‘å’l‚Éİ’è‚·‚é
+    protected bool AllTimerIs0()
+    {
+        bool b = true;
+        foreach(float f in timers)
+        {
+            if(f > 0)
+            {
+                b = false;
+            }
+        }
+        return b;
+    }
+    protected void SetTimer(int elementNum) //timersã®æŒ‡å®šã—ãŸç•ªå·ã‚’å¯¾å¿œã—ãŸæœ€å¤§å€¤ã«è¨­å®šã™ã‚‹
     {
         if(elementNum >= timers.Count) { return; }
         timers[elementNum] = maxTimers[elementNum];
     }
-    protected virtual void SetAttack() //UŒ‚‚µ‚½‚±‚Æ‚É‚·‚éˆ—
+    protected virtual void SetAttack() //æ”»æ’ƒã—ãŸã“ã¨ã«ã™ã‚‹å‡¦ç†
     {
         attackInterval = maxAttackInterval;
         SetTimer(0);
 
     }
-    public void Attack(int dmg) //Animation‚ÅŒÄ‚Ño‚·—p‚ÌŠÖ”
+    public void Attack(int dmg) //Animationã§å‘¼ã³å‡ºã™ç”¨ã®é–¢æ•°
     {
         PlayerController p = GameObject.Find("Player").GetComponent<PlayerController>();
-        //p.Hit(dmg);
+        p.Hit(dmg);
     }
     private void OnBecameInvisible()
     {

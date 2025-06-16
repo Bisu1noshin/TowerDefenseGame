@@ -1,74 +1,74 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class ShotController : MonoBehaviour
 {
-    // ƒCƒ“ƒXƒyƒNƒ^[QÆ•s‰Â
-    protected Vector3   moveVec; // –Ú“I‚ÌÀ•W
-    protected int       atp;     // ’e‚ÌˆĞ—Í
-    protected float     chargep; // ƒ`ƒƒ[ƒW‚µ‚½‚Ì’l
+    // ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼å‚ç…§ä¸å¯
+    protected Vector3   moveVec; // ç›®çš„ã®åº§æ¨™
+    protected float     chargep; // ãƒãƒ£ãƒ¼ã‚¸ã—ãŸæ™‚ã®å€¤
 
-    // ŒÀŠE’l
+    [SerializeField]
+    protected int atp;     // å¼¾ã®å¨åŠ›
+
+    // é™ç•Œå€¤
     protected const float maxChargep = 10;
 
     private void Start()
     {
-        // ƒ}ƒEƒX‚ÌÀ•W‚ğæ“¾
+        // ãƒã‚¦ã‚¹ã®åº§æ¨™ã‚’å–å¾—
         Vector3 mouseVec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseVec.z = 0;
 
-        // ƒ}ƒEƒX‚ÌÀ•W‚ğˆÚ“®ƒxƒNƒgƒ‹‚É•ÏŠ·
+        // ãƒã‚¦ã‚¹ã®åº§æ¨™ã‚’ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã«å¤‰æ›
         Vector3 v = mouseVec - transform.position;
         float r = Mathf.Atan2(v.y, v.x);
         moveVec = new Vector3(Mathf.Cos(r), Mathf.Sin(r));
 
-        // ’e‚Ì‚½‚ß‚½’l‚ğæ“¾
+        // å¼¾ã®ãŸã‚ãŸå€¤ã‚’å–å¾—
         chargep = PlayerChargeValue();
     }
 
     private void Update() {
 
-        // ˆÚ“®ˆ—
+        // ç§»å‹•å‡¦ç†
         ShotUpData();
 
-        // ‰æ–ÊŠOˆ—
+        // ç”»é¢å¤–å‡¦ç†
         OutShot();
     }
 
-    // ÚG”»’è
+    // æ¥è§¦åˆ¤å®š
     private void OnTriggerEnter2D(Collider2D collision) {
 
-        // BaseUnit=b_;
-        //if (b_ = collision.GetComponent<BaseUnit>()) { 
-        //    Vector2 v=new(moveVec.x,moveVec.y);
-        //    b_.Hit(v,atp);
-        //    Destroy(gameObject);
-        //}
-
-        Destroy(gameObject);
+        if (collision.TryGetComponent<BaseUnit>(out var b))
+        {
+            Vector2 v = new(moveVec.x, moveVec.y);
+            b.Hit(v, atp);
+            Destroy(gameObject);
+        }
     }
 
-    // ‰æ–ÊŠOˆ—
+    // ç”»é¢å¤–å‡¦ç†
     private void OutShot() {
 
-        float r = 15f;                  // ‰æ–ÊŠO‚Ì”¼Œa
-        float x = transform.position.x; // xÀ•W
-        float y = transform.position.y; // yÀ•W
+        float r = 15f;                  // ç”»é¢å¤–ã®åŠå¾„
+        float x = transform.position.x; // xåº§æ¨™
+        float y = transform.position.y; // yåº§æ¨™
 
-        // ‰æ–ÊŠO‚Éo‚½‚çƒIƒuƒWƒFƒNƒg‚ğ”j‰ó
+        // ç”»é¢å¤–ã«å‡ºãŸã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç ´å£Š
         if (Mathf.Sqrt(x * x + y * y) >= r) {
             Destroy(gameObject);
         }
     }
 
-    // player‚Ì‚½‚ßŠÔ‚ğæ“¾
+    // playerã®ãŸã‚æ™‚é–“ã‚’å–å¾—
 
     private float PlayerChargeValue()
     {
         float chargeValue = 1f;
         
-        // ‚½‚ß‚½’l‚ğæ“¾(–¢À‘•)
+        // ãŸã‚ãŸå€¤ã‚’å–å¾—(æœªå®Ÿè£…)
         if (GameObject.Find("Player").TryGetComponent<PlayerController>(out var p_)) {
 
             chargeValue = p_.GetCharge() * 5;
@@ -83,12 +83,12 @@ public abstract class ShotController : MonoBehaviour
         return chargeValue;
     }
 
-    // ’ŠÛƒƒ\ƒbƒh
+    // æŠ½è±¡ãƒ¡ã‚½ãƒƒãƒ‰
 
     protected abstract void SetShotAtp();
 
     protected abstract void ShotUpData();
 
-    // QÆ‰Â”\ƒƒ\ƒbƒh
+    // å‚ç…§å¯èƒ½ãƒ¡ã‚½ãƒƒãƒ‰
 
 }
