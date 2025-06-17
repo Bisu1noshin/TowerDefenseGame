@@ -1,34 +1,52 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class EndSceneController : MonoBehaviour
 {
-    private Vector3 Finish_Position = new Vector3(103f, 74.6655884f, 0f);
-    private Vector3 Plese_Any_Kye_Position = new Vector3(51, -542, 0);
-
     [SerializeField] private MaskableGraphic FinishLogo;
     [SerializeField] private MaskableGraphic Plese_Any_KyeLogo;
     [SerializeField] private MaskableGraphic ScoreLogo;
     [SerializeField] private MaskableGraphic youre_Score_isLogo;
 
     private int PlayerCnt;
+    private float timeCnt;
 
     private void Start()
     {
         PlayerCnt = 0;
-        
+
+        // logoの初期化
+        {
+            Plese_Any_KyeLogo.enabled = false;
+            ScoreLogo.enabled = false;
+            youre_Score_isLogo.enabled = false;
+        }
+
+        // Scoreの登録
     }
 
     private void Update()
     {
         GamingColor(ScoreLogo);
 
-        if (Input.anyKey) {
+        if (Input.anyKeyDown) {
 
             PlayerCnt++;
+
+            if (Plese_Any_KyeLogo.enabled)
+            {
+                SceneManager.LoadScene("TitleScene");
+            }
         }
+
+        FinishLogoUpData(PlayerCnt);
+        youre_Score_isLogoUpData(PlayerCnt);
+        Plese_Any_KyeLogoUpData(PlayerCnt);
+        ScoreLogoUpData(PlayerCnt);
     }
 
     private void GamingColor(MaskableGraphic ui)
@@ -71,5 +89,63 @@ public class EndSceneController : MonoBehaviour
         }
 
         ui.color = new Color(r, g, b);
+    }
+
+    private void FinishLogoUpData(int cnt) {
+
+        if (cnt == 0) {
+
+            timeCnt += Time.deltaTime;
+
+            if (timeCnt >= 0.5f) {
+
+                if(FinishLogo.enabled)
+                    FinishLogo.enabled = false;
+                else
+                    FinishLogo.enabled = true;
+
+                timeCnt = 0;
+            }
+        }
+
+        if (cnt >= 1) {
+
+            FinishLogo.enabled = false;
+        }
+    }
+
+    private void youre_Score_isLogoUpData(int cnt) {
+
+        if (cnt >= 1)
+        {
+            youre_Score_isLogo.enabled = true;
+        }
+    }
+
+    private void ScoreLogoUpData(int cnt) {
+
+        if (cnt >= 2) {
+
+            timeCnt += Time.deltaTime;
+
+            if (timeCnt >= 0.1f)
+            {
+
+                if (ScoreLogo.enabled)
+                    ScoreLogo.enabled = false;
+                else
+                    ScoreLogo.enabled = true;
+
+                timeCnt = 0;
+            }
+        }
+    }
+
+    private void Plese_Any_KyeLogoUpData(int cnt) {
+
+        if (cnt >= 3) {
+
+            Plese_Any_KyeLogo.enabled = true;
+        }
     }
 }
