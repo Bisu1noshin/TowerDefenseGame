@@ -79,7 +79,6 @@ public abstract class ShotController : MonoBehaviour
             }
         }
 
-        Debug.Log("chargeValue : " + chargeValue);
         return chargeValue;
     }
 

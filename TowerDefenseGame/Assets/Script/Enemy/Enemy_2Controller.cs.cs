@@ -1,42 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyController : BaseUnit
+public class Enemy_2Controller : BaseUnit
 {
-    enum StateType { Stand, Walk, Attack, Hit, Down };
-    enum StateTrigger { Stand, Walk, Attack, Hit, Down };
     StateMachine<StateType, StateTrigger> sm;
     Animator anim;
     AttackRange_Script attackRange;
     float deadTimer;
-    Bar_Enemy_Controller bar;
+    int ATK;
+    
     protected override void Setup()
     {
+        gameObject.name = "KUMA";
         sm = new StateMachine<StateType, StateTrigger>(StateType.Stand);
         attackRange = GetComponentInChildren<AttackRange_Script>();
         anim = GetComponent<Animator>();
-        bar = GetComponentInChildren<Bar_Enemy_Controller>();
         maxHP = 10;
-        HP = 10;
+        HP = maxHP;
+        ATK = 2;
         canKB = true;
-        kbTime = 4;
+        maxKBTime = 2;
+        kbTime = maxKBTime - 1;
         attackInterval = 0;
         maxAttackInterval = 2.0f;
         deadTimer = 1.0f;
         SMSetup();
+        AppearLifeBar();
     }
     protected override void UpdateOverrided()
     {
-        if(sm.GetState() != StateType.Down)
-        {
-            bar.SetPosition(transform.position + Vector3.up * 0.5f);
-            bar.FillBar((float)HP / maxHP);
-        }
-        if(sm.GetState() == StateType.Hit && AllTimerIs0())
-        {
-            IsDead();
-        }
+        LifeBarUpdate();
         sm.Update(Time.deltaTime);
     }
     protected override void SetAttack()
@@ -50,6 +45,7 @@ public class EnemyController : BaseUnit
     }
     protected override void KnockBack(Vector2 angle)
     {
+        bar.FillBar((float)HP / maxHP);
         sm.ExecuteTrigger(StateTrigger.Hit);
         base.KnockBack(angle);
     }
@@ -57,30 +53,39 @@ public class EnemyController : BaseUnit
     {
         sm.SetupState(StateType.Stand, () => anim.Play("Stand", 0, 0), () =>NullUpdate(), deltaTime => IdleUpdate());
         sm.SetupState(StateType.Walk, () => anim.Play("Walk", 0, 0), () => NullUpdate(), deltaTime => WalkUpdate());
-        sm.SetupState(StateType.Attack, () => anim.Play("Attack", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
-        sm.SetupState(StateType.Hit, () => anim.Play("Hit_L", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
+        sm.SetupState(StateType.Attack, () => anim.Play("Attack_Elbow", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
+        sm.SetupState(StateType.Hit, () => anim.Play("Hit_L", 0, 0), () => NullUpdate(), deltaTime => HitUpdate());
         sm.SetupState(StateType.Down, ()=> StartDown(), ()=> NullUpdate(), deltaTime => DeadUpdate());
+        sm.SetupState(StateType.Bound, () => BoundStart(), NullUpdate, deltaTime => BoundUpdate());
 
         sm.AddTransition(StateType.Stand, StateType.Walk, StateTrigger.Walk);
         sm.AddTransition(StateType.Stand, StateType.Attack, StateTrigger.Attack);
         sm.AddTransition(StateType.Stand, StateType.Hit, StateTrigger.Hit);
+        
+
         sm.AddTransition(StateType.Walk, StateType.Stand, StateTrigger.Stand);
         sm.AddTransition(StateType.Attack, StateType.Stand, StateTrigger.Stand);
         sm.AddTransition(StateType.Hit, StateType.Stand, StateTrigger.Stand);
-        sm.AddTransition(StateType.Hit, StateType.Down, StateTrigger.Down);
-        sm.AddTransition(StateType.Walk, StateType.Attack, StateTrigger.Attack);
-        sm.AddTransition(StateType.Walk, StateType.Hit, StateTrigger.Hit);
-        sm.AddTransition(StateType.Attack, StateType.Walk, StateTrigger.Walk);
-        sm.AddTransition(StateType.Attack, StateType.Hit, StateTrigger.Hit);
-        sm.AddTransition(StateType.Hit, StateType.Attack, StateTrigger.Attack);
+
         sm.AddTransition(StateType.Hit, StateType.Walk, StateTrigger.Walk);
+        sm.AddTransition(StateType.Attack, StateType.Walk, StateTrigger.Walk);
+
+        sm.AddTransition(StateType.Walk, StateType.Hit, StateTrigger.Hit);
+        sm.AddTransition(StateType.Attack, StateType.Hit, StateTrigger.Hit);
+        
+        sm.AddTransition(StateType.Walk, StateType.Attack, StateTrigger.Attack);
+        sm.AddTransition(StateType.Hit, StateType.Attack, StateTrigger.Attack);
+        
+        
+        sm.AddTransition(StateType.Stand, StateType.Down, StateTrigger.Down);
+        sm.AddTransition(StateType.Walk, StateType.Down, StateTrigger.Down);
+        sm.AddTransition(StateType.Attack, StateType.Down, StateTrigger.Down);
+        sm.AddTransition(StateType.Hit, StateType.Down, StateTrigger.Down);
     }
-    void NullUpdate()
-    {
-        //pass
-    }
+    void NullUpdate(){ /*pass*/ }
     void IdleUpdate()
     {
+        if (!AllTimerIs0()) { return; }
         moveVec = Vector3.zero;
         if (attackRange.CollisionHitPlayer())
         {
@@ -103,6 +108,7 @@ public class EnemyController : BaseUnit
     }
     void WalkUpdate()
     {
+        if (!AllTimerIs0()) { return; }
         if (attackRange.CollisionHitPlayer())
         {
             sm.ExecuteTrigger(StateTrigger.Stand);
@@ -129,6 +135,7 @@ public class EnemyController : BaseUnit
         GetComponentInChildren<AttackRange_Script>().enabled = false;
         GetComponentInChildren<BoxCollider2D>().enabled = false;
         GetComponent<SpriteRenderer>().color = Color.gray;
+        bar.CrushBar();
         anim.Play("Down", 0, 0);
     }
     public void EndAttack()
@@ -138,7 +145,7 @@ public class EnemyController : BaseUnit
     void IsDead() //ノックバック後の死亡判定
     {
         moveVec = Vector3.zero;
-        if(this.HP <= 0)
+        if(HP <= 0)
         {
             sm.ExecuteTrigger(StateTrigger.Down);
         }
@@ -152,5 +159,44 @@ public class EnemyController : BaseUnit
         moveVec = new Vector3(0, 1.0f, 0);
         deadTimer -= Time.deltaTime;
         if (deadTimer <= 0) { Destroy(gameObject); }
+    }
+
+    private void AppearLifeBar()
+    {
+        GameObject prefab = Resources.Load("enemy/Bar_Enemy_Prefab") as GameObject;
+        GameObject g = Instantiate(prefab);
+        g.transform.SetParent(GameObject.Find("Canvas").transform, false);
+        bar = g.GetOrAddComponent<Bar_Enemy_Controller>();
+    }
+    void HitUpdate()
+    {
+        if (AllTimerIs0())
+        {
+            IsDead();
+        }
+    }
+    void LifeBarUpdate()
+    {
+        if (sm.GetState() != StateType.Down)
+        {
+            bar.SetPosition(transform.position + Vector3.up * 0.5f);
+            bar.FillBar((float)HP / maxHP);
+        }
+    }
+    void AttackUpdate()
+    {
+        if (!attackRange.CollisionHitPlayer()) { return; }
+        GameObject.Find("Player").GetComponent<PlayerController>().Hit(ATK);
+    }
+    void BoundStart()
+    {
+        anim.Play("Down", 0, 0);
+        GetComponent<BoxCollider2D>().enabled = false;
+    }
+    void BoundUpdate()
+    {
+        if (!AllTimerIs0()) { return; }
+        moveVec = Vector3.zero;
+        GetComponent<BoxCollider2D>().enabled = true;
     }
 }

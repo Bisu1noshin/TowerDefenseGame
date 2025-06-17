@@ -5,15 +5,19 @@ using UnityEngine;
 public abstract class BaseUnit : MonoBehaviour
 {
     [SerializeField]protected int HP;     //現在HP
+    protected enum StateType { Stand, Walk, Attack, Hit, Down, Bound };
+    protected enum StateTrigger { Stand, Walk, Attack, Hit, Down, Bound };
     protected int maxHP;  //最大HP
     protected bool canKB; //ノックバックができるオブジェクトか否か
     protected int kbTime; //ノックバック回数
+    protected int maxKBTime;
     protected Vector2 moveVec; //一秒間で移動する座標量を入れる
-    List<float> timers = new() { 0, 0 };             //行動不能タイマー管理用　1番目：攻撃所要時間　2番目：ノックバック時間
-    List<float> maxTimers = new() { 0.5f, 0.2f };    //行動不能タイマー管理用　1番目：最大攻撃時間　2番目：最大ノックバック時間
+    List<float> timers = new () { 0, 0, 0, 0, 0, 0 };             //行動不能タイマー管理用　1番目：攻撃所要時間　2番目：ノックバック時間
+    List<float> maxTimers = new () { 0, 0, 0.5f, 0.2f, 0, 1.0f };    //行動不能タイマー管理用　1番目：最大攻撃時間　2番目：最大ノックバック時間
     protected float attackInterval;       //攻撃間隔
     protected float maxAttackInterval;    //最大攻撃間隔
     protected bool isAlive;
+    protected Bar_Enemy_Controller bar;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +32,7 @@ public abstract class BaseUnit : MonoBehaviour
 
         transform.position += (Vector3)moveVec * Time.deltaTime;
         if (!isAlive) { return; }
+        if(bar != null) { bar.SetPosition(transform.position + Vector3.up * 0.5f); }
         if(attackInterval > 0) { attackInterval -=  Time.deltaTime; }
         if (!DecreaseTimer()) { return; }
         UpdateOverrided();
@@ -41,16 +46,19 @@ public abstract class BaseUnit : MonoBehaviour
     {
         HP -= damage;
 
-        float HPper = ((float)HP / maxHP) * kbTime; //ノックバック処理
-        if(HPper >= (int)HPper && HPper <= (int)HPper + 1 && canKB)
+        float HPper = Mathf.Clamp01((float)HP / (float)maxHP); //ノックバック処理
+        float KBper = Mathf.Clamp01((float)kbTime / (float)maxKBTime);
+        if (HPper <= KBper && canKB)
         {
-            KnockBack(angle); 
+            SetTimer(StateType.Hit);
+            KnockBack(angle);
         }
-        
+
     }
     protected virtual void KnockBack(Vector2 angle)
     {
-        moveVec = angle.normalized * 2.0f;
+        kbTime--;
+        moveVec = angle.normalized * 3.0f;
     }
     protected virtual void Kill()
     {
@@ -86,10 +94,15 @@ public abstract class BaseUnit : MonoBehaviour
         if(elementNum >= timers.Count) { return; }
         timers[elementNum] = maxTimers[elementNum];
     }
+    protected void SetTimer(StateType type)
+    {
+        if ((int)type >= timers.Count) { return; }
+        timers[(int)type] = maxTimers[(int)type];
+    }
     protected virtual void SetAttack() //攻撃したことにする処理
     {
         attackInterval = maxAttackInterval;
-        SetTimer(0);
+        SetTimer(StateType.Attack);
 
     }
     public void Attack(int dmg) //Animationで呼び出す用の関数
