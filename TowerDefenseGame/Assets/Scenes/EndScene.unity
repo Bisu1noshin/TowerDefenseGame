@@ -148,10 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb8b6363390d7b042a8326bf00e57cb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FinishLogo: {fileID: 0}
-  Plese_Any_KyeLogo: {fileID: 0}
+  FinishLogo: {fileID: 302140450}
+  Plese_Any_KyeLogo: {fileID: 654420149}
   ScoreLogo: {fileID: 269990761}
-  youre_Score_isLogo: {fileID: 0}
+  youre_Score_isLogo: {fileID: 1288478379}
 --- !u!4 &243925837
 Transform:
   m_ObjectHideFlags: 0
@@ -473,7 +473,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 51, y: -542}
+  m_AnchoredPosition: {x: 51, y: -452}
   m_SizeDelta: {x: 1501.4158, y: 419.9044}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &654420149
@@ -914,8 +914,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

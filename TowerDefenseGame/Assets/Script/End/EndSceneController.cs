@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,14 +13,22 @@ public class EndSceneController : MonoBehaviour
     [SerializeField] private MaskableGraphic ScoreLogo;
     [SerializeField] private MaskableGraphic youre_Score_isLogo;
 
+    private int PlayerCnt;
+
     private void Start()
     {
-
+        PlayerCnt = 0;
+        
     }
 
     private void Update()
     {
         GamingColor(ScoreLogo);
+
+        if (Input.anyKey) {
+
+            PlayerCnt++;
+        }
     }
 
     private void GamingColor(MaskableGraphic ui)
