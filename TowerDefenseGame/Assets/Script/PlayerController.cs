@@ -7,12 +7,15 @@ public class PlayerController : MonoBehaviour
 {
     PlayerInput inputActions;
     float cnt_MouseTime = 0; //クリックしている時間をカウント
-    [SerializeField] const float maxChargeTime = 5.0f; //最大チャージ時間(割合計算に使うためconst)
+    [SerializeField] const float maxChargeTime = 2.0f; //最大チャージ時間(割合計算に使うためconst)
     [SerializeField] GameObject bulletPrefab;
     bool pushing = false; //マウスボタンがdown状態かのフラグ
     [SerializeField] const int maxHP = 50; //最大体力(割合計算に使うためconst)
     int nowHP = maxHP; //現在体力 初期化はmaxHPで
     [SerializeField] ParticleSystem Ef_Explosion; //爆発エフェクト
+    bool EfOnce = false; //爆発エフェクトが一回だけ出るように
+    bool IsAlive = true; //生存フラグ
+    GameObject PowerBer;
 
     private void Awake()
     {
@@ -23,24 +26,35 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Shot.canceled += Shoot;
 
         inputActions.Enable();
+
+        PowerBer = GameObject.Find("Player_Charge");
     }
 
     private void Update()
     {
-        if (pushing == true)
+        if (IsAlive == true)
         {
-            //チャージ
-            cnt_MouseTime += Time.deltaTime;
-            if( cnt_MouseTime > maxChargeTime ) { cnt_MouseTime=maxChargeTime; }
+            if (pushing == true)
+            {
+                //チャージ
+                cnt_MouseTime += Time.deltaTime;
+                if (cnt_MouseTime > maxChargeTime) { cnt_MouseTime = maxChargeTime; }
 
-            GameObject PowerBer = GameObject.Find("Canvas");
-            PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(cnt_MouseTime / maxChargeTime);
+                //チャージ割合を表示する
+                PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(cnt_MouseTime / maxChargeTime);
+            }
         }
 
         //HPが0になったら死亡
         if (nowHP <= 0)
         {
-            Instantiate(Ef_Explosion, transform.position, Quaternion.identity);
+            if (EfOnce == false)
+            {
+                Instantiate(Ef_Explosion, transform.position, Quaternion.identity);
+                IsAlive = false;
+                EfOnce = true;
+            }
+            Destroy(PowerBer);
             Destroy(gameObject);
         }
     }
@@ -51,8 +65,7 @@ public class PlayerController : MonoBehaviour
         nowHP -= damage_;
     }
 
-    // 入力イベント
-
+    //入力イベント
     //クリック開始処理
     public void StartCharge(InputAction.CallbackContext context)
     {
@@ -67,14 +80,15 @@ public class PlayerController : MonoBehaviour
         Quaternion q=this.transform.rotation;
         GameObject shot = Instantiate(bulletPrefab, v, q);
 
-        //チャージのリセット
+        //チャージバーをリセット
         pushing = false;
-        //cnt_MouseTime = 0;
         GameObject PowerBer = GameObject.Find("Canvas");
         PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(0);
     }
+    //入力イベントここまで
 
     //チャージ割合の取得
+    //弾が呼び出す　このタイミングでMouseカウントをリセット
     public float GetCharge()
     {
         float chargeValue = cnt_MouseTime / maxChargeTime;
