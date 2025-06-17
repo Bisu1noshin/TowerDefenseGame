@@ -6,16 +6,24 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     PlayerInput inputActions;
+
     float cnt_MouseTime = 0; //クリックしている時間をカウント
     [SerializeField] const float maxChargeTime = 2.0f; //最大チャージ時間(割合計算に使うためconst)
     [SerializeField] GameObject bulletPrefab;
+
     bool pushing = false; //マウスボタンがdown状態かのフラグ
     [SerializeField] const int maxHP = 50; //最大体力(割合計算に使うためconst)
     int nowHP = maxHP; //現在体力 初期化はmaxHPで
+
     [SerializeField] ParticleSystem Ef_Explosion; //爆発エフェクト
     bool EfOnce = false; //爆発エフェクトが一回だけ出るように
+
     bool IsAlive = true; //生存フラグ
-    GameObject PowerBer;
+    GameObject PowerBer; //チャージバー
+
+    AudioSource audioSource; //オーディオソース
+    [SerializeField]AudioClip SE_Shoot; //弾発射時の音
+    [SerializeField]AudioClip SE_Bomb; //死亡時の音
 
     private void Awake()
     {
@@ -28,6 +36,11 @@ public class PlayerController : MonoBehaviour
         inputActions.Enable();
 
         PowerBer = GameObject.Find("Player_Charge");
+    }
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -48,12 +61,17 @@ public class PlayerController : MonoBehaviour
         //HPが0になったら死亡
         if (nowHP <= 0)
         {
+            //エフェクトを一回だけ再生
             if (EfOnce == false)
             {
                 Instantiate(Ef_Explosion, transform.position, Quaternion.identity);
                 IsAlive = false;
                 EfOnce = true;
             }
+
+            //死亡時に音を鳴らす(Destroyしても大丈夫)
+            AudioSource.PlayClipAtPoint(SE_Bomb, transform.position);
+
             Destroy(PowerBer);
             Destroy(gameObject);
         }
@@ -79,6 +97,9 @@ public class PlayerController : MonoBehaviour
         Vector3 v=this.transform.position;
         Quaternion q=this.transform.rotation;
         GameObject shot = Instantiate(bulletPrefab, v, q);
+
+        //発射音を鳴らす
+        audioSource.PlayOneShot(SE_Shoot);
 
         //チャージバーをリセット
         pushing = false;
