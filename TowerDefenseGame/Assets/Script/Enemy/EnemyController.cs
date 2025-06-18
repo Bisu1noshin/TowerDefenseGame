@@ -13,13 +13,14 @@ public class EnemyController : BaseUnit
 
     protected override void Setup()
     {
-        GetComponent<SpriteRenderer>().sortingOrder = (int)(transform.position.y * 10.0f);
+        GetComponent<SpriteRenderer>().sortingOrder = (int)(-transform.position.y * 10.0f) + 50;
         sm = new StateMachine<StateType, StateTrigger>(StateType.Stand);
         attackRange = GetComponentInChildren<AttackRange_Script>();
         anim = GetComponent<Animator>();
         maxHP = 10;
         HP = maxHP;
         canKB = true;
+        ATK = 1;
         maxKBTime = 2;
         kbTime = maxKBTime - 1;
         attackInterval = 0;
@@ -30,7 +31,6 @@ public class EnemyController : BaseUnit
     }
     protected override void UpdateOverrided()
     {
-        if(PlayerController.PlayerInstance == null) { return; }
         LifeBarUpdate();
         sm.Update(Time.deltaTime);
     }
@@ -86,44 +86,40 @@ public class EnemyController : BaseUnit
     {
         if (!AllTimerIs0()) { return; }
         moveVec = Vector3.zero;
-        if (attackRange.CollisionHitPlayer())
+        GameObject p = GameObject.Find("Player");
+        if (p != null)
         {
-            if (attackInterval <= 0)
+            Vector2 dist = (p.transform.position - transform.position);
+            if(dist.magnitude < minDist)
             {
-                SetAttack();
+                if (attackInterval <= 0)
+                {
+                    SetAttack();
+                }
             }
             else
             {
-                if (!sm.Equals(StateTrigger.Stand))
-                {
-                    sm.ExecuteTrigger(StateTrigger.Stand);
-                }
+                sm.ExecuteTrigger(StateTrigger.Walk);
             }
-        }
-        else
-        {
-            sm.ExecuteTrigger(StateTrigger.Walk);
         }
     }
     void WalkUpdate()//
     {
         if (!AllTimerIs0()) { return; }
-        if (attackRange.CollisionHitPlayer())
+        GameObject p = GameObject.Find("Player");
+        if (p != null)
         {
-            sm.ExecuteTrigger(StateTrigger.Attack);
-        }
-        else
-        {
-            if (GameObject.Find("Player") != null)
+            Vector2 dist = (Vector2)(p.transform.position - transform.position);
+            if (dist.magnitude > minDist)
             {
-                Vector2 dist = (Vector2)(GameObject.Find("Player").transform.position - transform.position);
-                if (dist.magnitude > 1.5f)
+                moveVec = dist.normalized;
+            }
+            else
+            {
+                moveVec = Vector2.zero;
+                if (AllTimerIs0())
                 {
-                    moveVec = dist.normalized;
-                }
-                else
-                {
-                    moveVec = Vector2.zero;
+                    sm.ExecuteTrigger(StateTrigger.Attack);
                 }
             }
         }

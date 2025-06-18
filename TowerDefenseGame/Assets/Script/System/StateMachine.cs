@@ -125,6 +125,7 @@ public class StateMachine<TState, TTrigger>
 
         // OnEnter
         _stateType = to;
+        Debug.Log(to.ToString());
         _stateMapping = _stateMappings[to];
         if (_stateMapping.onEnter != null)
         {

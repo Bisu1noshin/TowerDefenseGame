@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6854207928491409694}
   - component: {fileID: 6954720930115800930}
   - component: {fileID: 5752001540045473268}
-  - component: {fileID: 6562413734771977581}
+  - component: {fileID: 581129393703727570}
   m_Layer: 0
-  m_Name: Enemy_Kuma
+  m_Name: Enemy_Kuma_2
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +187,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6562413734771977581
+--- !u!114 &581129393703727570
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 417327586954522219}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b52db406e767d3b40beb2d3bb72d8a7c, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f8874bb784b8854c99e76cae072e8dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 0
