@@ -28,7 +28,7 @@ public class EndSceneController : MonoBehaviour
 
         // Scoreの登録
 
-        //ScoreLogo.text = +"点";
+        ScoreLogo.text = ScoreManager.ScoreManagerInstance.GetScore().ToString()+"点";
     }
 
     private void Update()
