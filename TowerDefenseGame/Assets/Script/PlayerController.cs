@@ -29,8 +29,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]AudioClip SE_Shoot; //弾発射時の音
     [SerializeField]AudioClip SE_Bomb; //死亡時の音
 
-    private Image ber;
-
     private void Awake()
     {
         if (PlayerInstance != null && PlayerInstance != this)
@@ -47,10 +45,8 @@ public class PlayerController : MonoBehaviour
 
         PowerBer = GameObject.Find("Player_Charge");
         HPBer = GameObject.Find("Canvas");
-        ber = PowerBer.GetComponent<Image>();
-
+    
         PlayerInstance = this;
-
     }
 
     private void Start()
@@ -71,8 +67,6 @@ public class PlayerController : MonoBehaviour
                 //チャージ割合を表示する
                 PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(cnt_MouseTime / maxChargeTime);
             }
-
-
         }
 
         //HPが0になったら死亡
