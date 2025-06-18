@@ -9,7 +9,7 @@ public class EndSceneController : MonoBehaviour
 {
     [SerializeField] private MaskableGraphic FinishLogo;
     [SerializeField] private MaskableGraphic Plese_Any_KyeLogo;
-    [SerializeField] private MaskableGraphic ScoreLogo;
+    [SerializeField] private TextMeshProUGUI ScoreLogo;
     [SerializeField] private MaskableGraphic youre_Score_isLogo;
 
     private int PlayerCnt;
@@ -27,6 +27,8 @@ public class EndSceneController : MonoBehaviour
         }
 
         // Scoreの登録
+
+        //ScoreLogo.text = +"点";
     }
 
     private void Update()
