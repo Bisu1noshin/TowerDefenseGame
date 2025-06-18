@@ -5,19 +5,22 @@ public class Bar_Enemy_Controller : MonoBehaviour
     RectTransform rect;
     PowerBar bar;
     RectTransform childT;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    private void Awake()
     {
         rect = GetComponent<RectTransform>();
         bar = GetComponentInChildren<PowerBar>();
         childT = GetComponentInChildren<RectTransform>();
+        rect.anchoredPosition = new Vector2(0, -1000);
+        childT.anchoredPosition = new Vector2(0, -1000);
     }
 
     // Update is called once per frame
     public void SetPosition(Vector2 pos)
     {
-        rect.anchoredPosition = new Vector2(pos.x * 50, pos.y * 50 + 50);
-        childT.anchoredPosition = new Vector2(pos.x * 50, pos.y * 50 + 50);
+        Vector2 vec = new Vector2(pos.x * 70, pos.y * 80 + 50);
+        rect.anchoredPosition = vec;
+        childT.anchoredPosition = vec;
     }
     public void FillBar(float per)
     {

@@ -53,7 +53,7 @@ public class Enemy_2Controller : BaseUnit
     {
         sm.SetupState(StateType.Stand, () => anim.Play("Stand", 0, 0), () =>NullUpdate(), deltaTime => IdleUpdate());
         sm.SetupState(StateType.Walk, () => anim.Play("Walk", 0, 0), () => NullUpdate(), deltaTime => WalkUpdate());
-        sm.SetupState(StateType.Attack, () => anim.Play("Attack_Elbow", 0, 0), () => NullUpdate(), deltaTime => NullUpdate());
+        sm.SetupState(StateType.Attack, () => anim.Play("Attack_Elbow", 0, 0), () => NullUpdate(), deltaTime => AttackUpdate());
         sm.SetupState(StateType.Hit, () => anim.Play("Hit_L", 0, 0), () => NullUpdate(), deltaTime => HitUpdate());
         sm.SetupState(StateType.Down, ()=> StartDown(), ()=> NullUpdate(), deltaTime => DeadUpdate());
         sm.SetupState(StateType.Bound, () => BoundStart(), NullUpdate, deltaTime => BoundUpdate());
@@ -81,30 +81,40 @@ public class Enemy_2Controller : BaseUnit
         sm.AddTransition(StateType.Walk, StateType.Down, StateTrigger.Down);
         sm.AddTransition(StateType.Attack, StateType.Down, StateTrigger.Down);
         sm.AddTransition(StateType.Hit, StateType.Down, StateTrigger.Down);
+
+        sm.AddTransition(StateType.Attack, StateType.Bound, StateTrigger.Bound);
+        sm.AddTransition(StateType.Bound, StateType.Stand, StateTrigger.Stand);
+        sm.AddTransition(StateType.Bound, StateType.Walk, StateTrigger.Walk);
     }
     void NullUpdate(){ /*pass*/ }
     void IdleUpdate()
     {
         if (!AllTimerIs0()) { return; }
         moveVec = Vector3.zero;
-        if (attackRange.CollisionHitPlayer())
+        GameObject p = GameObject.Find("Player");
+        if(p != null)
         {
-            if(attackInterval <= 0)
+            Vector2 dist = (Vector2)(p.transform.position - transform.position);
+            if (dist.magnitude < 3.5f)
             {
-                SetAttack();
+                if(attackInterval <= 0)
+                {
+                    SetAttack();
+                }
+                else
+                {
+                    if (!sm.Equals(StateTrigger.Stand))
+                    {
+                        sm.ExecuteTrigger(StateTrigger.Stand);
+                    }
+                }
             }
             else
             {
-                if (!sm.Equals(StateTrigger.Stand))
-                {
-                    sm.ExecuteTrigger(StateTrigger.Stand);
-                }
+                sm.ExecuteTrigger(StateTrigger.Walk);
             }
         }
-        else
-        {
-            sm.ExecuteTrigger(StateTrigger.Walk);
-        }
+        
     }
     void WalkUpdate()
     {
