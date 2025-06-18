@@ -2,7 +2,7 @@
 
 public class ScoreManager : MonoBehaviour
 {
-    public ScoreManager ScoreManagerInstance; //生成された自分自身を入れる(多重生成防止)
+    public static ScoreManager ScoreManagerInstance; //生成された自分自身を入れる(多重生成防止)
     public int Score; //スコア
 
     private void Awake()
@@ -13,7 +13,21 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Update()
+    {
+        //Escで終了する
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
     }
 
     //多重生成防止

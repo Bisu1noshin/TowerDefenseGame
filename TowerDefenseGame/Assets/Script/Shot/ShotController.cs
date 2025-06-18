@@ -8,7 +8,6 @@ public abstract class ShotController : MonoBehaviour
     protected Vector3   moveVec; // 目的の座標
     protected float     chargep; // チャージした時の値
 
-    [SerializeField]
     protected int atp;     // 弾の威力
 
     // 限界値
@@ -27,6 +26,9 @@ public abstract class ShotController : MonoBehaviour
 
         // 弾のためた値を取得
         chargep = PlayerChargeValue();
+
+        // tama
+        SetShotAtp();
     }
 
     private void Update() {
@@ -71,7 +73,13 @@ public abstract class ShotController : MonoBehaviour
         // ためた値を取得(未実装)
         if (GameObject.Find("Player").TryGetComponent<PlayerController>(out var p_)) {
 
-            chargeValue = p_.GetCharge() * 5;
+            chargeValue = p_.GetCharge() * 10;
+
+            //ダメージベーシックインカム
+            if (chargeValue < 1.0f)
+            {
+                chargeValue = 1.0f;
+            }
 
             if (chargeValue >= maxChargep)
             {
@@ -79,7 +87,6 @@ public abstract class ShotController : MonoBehaviour
             }
         }
 
-        Debug.Log("chargeValue : " + chargeValue);
         return chargeValue;
     }
 

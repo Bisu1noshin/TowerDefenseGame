@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     PlayerInput inputActions;
+    public static PlayerController PlayerInstance;
 
     float cnt_MouseTime = 0; //クリックしている時間をカウント
     [SerializeField] const float maxChargeTime = 2.0f; //最大チャージ時間(割合計算に使うためconst)
     [SerializeField] GameObject bulletPrefab;
-
     bool pushing = false; //マウスボタンがdown状態かのフラグ
-    [SerializeField] const int maxHP = 50; //最大体力(割合計算に使うためconst)
+
+    [SerializeField] const int maxHP = 10; //最大体力(割合計算に使うためconst)
     int nowHP = maxHP; //現在体力 初期化はmaxHPで
 
     [SerializeField] ParticleSystem Ef_Explosion; //爆発エフェクト
@@ -20,13 +23,20 @@ public class PlayerController : MonoBehaviour
 
     bool IsAlive = true; //生存フラグ
     GameObject PowerBer; //チャージバー
+    GameObject HPBer; //HPバー
 
     AudioSource audioSource; //オーディオソース
     [SerializeField]AudioClip SE_Shoot; //弾発射時の音
     [SerializeField]AudioClip SE_Bomb; //死亡時の音
 
+    private Image ber;
+
     private void Awake()
     {
+        if (PlayerInstance != null && PlayerInstance != this)
+        {
+            Destroy(gameObject);
+        }
         inputActions = new PlayerInput();
 
         //入力処理関数をバインド
@@ -36,6 +46,11 @@ public class PlayerController : MonoBehaviour
         inputActions.Enable();
 
         PowerBer = GameObject.Find("Player_Charge");
+        HPBer = GameObject.Find("Canvas");
+        ber = PowerBer.GetComponent<Image>();
+
+        PlayerInstance = this;
+
     }
 
     private void Start()
@@ -44,7 +59,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update()
-    {
+    { 
         if (IsAlive == true)
         {
             if (pushing == true)
@@ -56,6 +71,8 @@ public class PlayerController : MonoBehaviour
                 //チャージ割合を表示する
                 PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(cnt_MouseTime / maxChargeTime);
             }
+
+
         }
 
         //HPが0になったら死亡
