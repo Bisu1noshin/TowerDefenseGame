@@ -1,21 +1,21 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
 public class PowerBar : MonoBehaviour
 {
     public Image powerFillImage; //Red bar
-    public float maxPower = 100f; //Å‘åƒpƒ[
-    public float chargeSpeed = 50f; //ƒ`ƒƒ[ƒW‘¬“xi1•b‚É50ƒ`ƒƒ[ƒWj
+    public float maxPower = 100f; //æœ€å¤§ãƒ‘ãƒ¯ãƒ¼
+    public float chargeSpeed = 50f; //ãƒãƒ£ãƒ¼ã‚¸é€Ÿåº¦ï¼ˆ1ç§’ã«50ãƒãƒ£ãƒ¼ã‚¸ï¼‰
 
-    public float minDamage = 10f; //Å¬ƒ_ƒ[ƒW
-    public float maxDamage = 100f; //Å‘åƒ_ƒ[ƒW
+    public float minDamage = 10f; //æœ€å°ãƒ€ãƒ¡ãƒ¼ã‚¸
+    public float maxDamage = 100f; //æœ€å¤§ãƒ€ãƒ¡ãƒ¼ã‚¸
 
-    private float currentPower = 0f; //¡‚Ìƒpƒ[Å‰‚Í‚O‚Å
-    private bool isCharging = false; //¡ƒ`ƒƒ[ƒW’†‚©‚Ç‚¤‚©
+    private float currentPower = 0f; //ä»Šã®ãƒ‘ãƒ¯ãƒ¼æœ€åˆã¯ï¼ã§
+    private bool isCharging = false; //ä»Šãƒãƒ£ãƒ¼ã‚¸ä¸­ã‹ã©ã†ã‹
 
     void Start()
     {
-        //Å‰‚Íƒpƒ[‚ğ‚O‚Å‰Šú‰»
+        //æœ€åˆã¯ãƒ‘ãƒ¯ãƒ¼ã‚’ï¼ã§åˆæœŸåŒ–
         currentPower = 0f;
 
         //UpdatePowerBar();
@@ -24,13 +24,13 @@ public class PowerBar : MonoBehaviour
 
     void Update()
     {
-        //ƒ}ƒEƒX¶ƒNƒŠƒbƒN‚Åƒ`ƒƒ[ƒW
+        //ãƒã‚¦ã‚¹å·¦ã‚¯ãƒªãƒƒã‚¯ã§ãƒãƒ£ãƒ¼ã‚¸
         if (Input.GetMouseButton(0))
         {
             //ChargePower();
         }
 
-        //ƒ}ƒEƒXƒ{ƒ^ƒ“—£‚ê‚½‚ç”­Ë
+        //ãƒã‚¦ã‚¹ãƒœã‚¿ãƒ³é›¢ã‚ŒãŸã‚‰ç™ºå°„
         if (Input.GetMouseButtonUp(0))
         {
             //Shot();
@@ -38,13 +38,13 @@ public class PowerBar : MonoBehaviour
         }
     }
 
-    /*void ChargePower()      //ƒpƒ[ƒ`ƒƒ[ƒW
+    /*void ChargePower()      //ãƒ‘ãƒ¯ãƒ¼ãƒãƒ£ãƒ¼ã‚¸
     {
         if (currentPower < maxPower)
         {
             currentPower += chargeSpeed * Time.deltaTime;
 
-            //Å‘å’l‚ğ’´‚¦‚È‚¢‚æ‚¤‚É
+            //æœ€å¤§å€¤ã‚’è¶…ãˆãªã„ã‚ˆã†ã«
             if (currentPower > maxPower)
             {
                 currentPower = maxPower;
@@ -59,19 +59,19 @@ public class PowerBar : MonoBehaviour
         powerFillImage.fillAmount = per_;
     }
 
-    /*void UpdatePowerBar()       //ƒpƒ[ƒo[ó‘ÔUpdate
+    /*void UpdatePowerBar()       //ãƒ‘ãƒ¯ãƒ¼ãƒãƒ¼çŠ¶æ…‹Update
     {
-        //Fill Amount‚Í0`1‚ÌŠÔ
+        //Fill Amountã¯0ï½1ã®é–“
         float fillAmaount = currentPower / maxPower;
         powerFillImage.fillAmount = fillAmaount;
     }
 
-    //’e”­Ë
+    //å¼¾ç™ºå°„
     void Shot()
     {
         float damage = Mathf.Lerp(minDamage, maxDamage, currentPower);
 
-        //’e”­ËÀ‘•
+        //å¼¾ç™ºå°„å®Ÿè£…
 
         ResetBar();
         isCharging = false;
