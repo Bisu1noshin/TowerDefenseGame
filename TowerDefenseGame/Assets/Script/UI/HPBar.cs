@@ -20,13 +20,13 @@ public class HPBar : MonoBehaviour
         nowHP = 100f;
 
         //UpdateHPBar();
-        HPFillImage.fillAmount = 100;
+        HPFillImage.fillAmount = 1;
     }
 
     void Update()
     {
         //どんどんFillBarを減らす
-        nowHP = GetComponent<PlayerController>().GetHP();
+        //nowHP = GetComponent<PlayerController>().GetHP();
     }
 
 

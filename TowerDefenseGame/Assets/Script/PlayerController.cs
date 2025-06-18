@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -29,6 +30,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]AudioClip SE_Shoot; //弾発射時の音
     [SerializeField]AudioClip SE_Bomb; //死亡時の音
 
+    float time = 0;
+
     private void Awake()
     {
         if (PlayerInstance != null && PlayerInstance != this)
@@ -44,7 +47,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Enable();
 
         PowerBer = GameObject.Find("Player_Charge");
-        HPBer = GameObject.Find("Canvas");
+        HPBer = GameObject.Find("Player_HP");
     
         PlayerInstance = this;
     }
@@ -67,6 +70,9 @@ public class PlayerController : MonoBehaviour
                 //チャージ割合を表示する
                 PowerBer.GetComponentInChildren<PowerBar>().SetFillAmount(cnt_MouseTime / maxChargeTime);
             }
+
+            //HP割合を表示する
+            HPBer.GetComponentInChildren<HPBar>().SetFillAmount(GetHP());
         }
 
         //HPが0になったら死亡
@@ -83,7 +89,11 @@ public class PlayerController : MonoBehaviour
             //死亡時に音を鳴らす(Destroyしても大丈夫)
             AudioSource.PlayClipAtPoint(SE_Bomb, transform.position);
 
+            PlayerInstance = null;
+            inputActions.Disable();
+
             Destroy(PowerBer);
+            Destroy(HPBer);
             Destroy(gameObject);
         }
     }
@@ -131,6 +141,6 @@ public class PlayerController : MonoBehaviour
     //HP割合の取得
     public float GetHP()
     {
-        return nowHP / maxHP;
+        return (float)nowHP / (float)maxHP;
     }
 }
