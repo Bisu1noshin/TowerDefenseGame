@@ -13,9 +13,11 @@ public class Enemy_2Controller : BaseUnit
     
     protected override void Setup()
     {
-        gameObject.name = "KUMA";
+        GetComponent<SpriteRenderer>().sortingOrder = (int)(-transform.position.y * 10.0f) + 50;
+        gameObject.name = "KUMA2";
         sm = new StateMachine<StateType, StateTrigger>(StateType.Stand);
         attackRange = GetComponentInChildren<AttackRange_Script>();
+        GetComponent<SpriteRenderer>().color = Color.cyan;
         anim = GetComponent<Animator>();
         maxHP = 10;
         HP = maxHP;
@@ -24,7 +26,7 @@ public class Enemy_2Controller : BaseUnit
         maxKBTime = 2;
         kbTime = maxKBTime - 1;
         attackInterval = 0;
-        maxAttackInterval = 2.0f;
+        maxAttackInterval = 4.0f;
         deadTimer = 1.0f;
         SMSetup();
         AppearLifeBar();
@@ -85,6 +87,8 @@ public class Enemy_2Controller : BaseUnit
         sm.AddTransition(StateType.Attack, StateType.Bound, StateTrigger.Bound);
         sm.AddTransition(StateType.Bound, StateType.Stand, StateTrigger.Stand);
         sm.AddTransition(StateType.Bound, StateType.Walk, StateTrigger.Walk);
+        sm.AddTransition(StateType.Bound, StateType.Hit,StateTrigger.Hit);
+        sm.AddTransition(StateType.Bound, StateType.Attack, StateTrigger.Attack);
     }
     void NullUpdate(){ /*pass*/ }
     void IdleUpdate()
@@ -95,7 +99,7 @@ public class Enemy_2Controller : BaseUnit
         if(p != null)
         {
             Vector2 dist = (Vector2)(p.transform.position - transform.position);
-            if (dist.magnitude < 3.5f)
+            if (dist.magnitude < 8.0f)
             {
                 if(attackInterval <= 0)
                 {
@@ -123,13 +127,13 @@ public class Enemy_2Controller : BaseUnit
         if (p != null)
         {
             Vector2 dist = (Vector2)(p.transform.position - transform.position);
-            if (dist.magnitude < 1.5f)
+            if (dist.magnitude < minDist)
             {
                 moveVec = Vector2.zero;
             }
             else
             {
-                if(dist.magnitude < 3.5f)
+                if(dist.magnitude < 8.0f)
                 {
                     sm.ExecuteTrigger(StateTrigger.Attack);
                 }
@@ -145,7 +149,7 @@ public class Enemy_2Controller : BaseUnit
         GetComponent<BoxCollider2D>().enabled = false;  //昇天の準備　色々な機能をOFFにする
         GetComponentInChildren<AttackRange_Script>().enabled = false;
         GetComponentInChildren<BoxCollider2D>().enabled = false;
-        GetComponent<SpriteRenderer>().color = Color.gray;
+        GetComponent<SpriteRenderer>().color = Color.blue;
         bar.CrushBar();
         anim.Play("Down", 0, 0);
     }
@@ -196,14 +200,21 @@ public class Enemy_2Controller : BaseUnit
     }
     void AttackUpdate()//攻撃処理
     {
+        GameObject p = GameObject.Find("Player");
+        if (p != null)
+        {
+            Vector2 dist = (Vector2)(p.transform.position - transform.position);
+            moveVec = dist.normalized * 4.0f;
+        }
         if (!attackRange.CollisionHitPlayer()) { return; }//攻撃成功まで呼び出されない
         GameObject.Find("Player").GetComponent<PlayerController>().Hit(ATK);
+        sm.ExecuteTrigger(StateTrigger.Bound);
     }
     void BoundStart()//バウンド開始時の処理
     {
         anim.Play("Down", 0, 0);
-        GetComponent<BoxCollider2D>().enabled = false;
-        moveVec = -moveVec;
+        //GetComponent<BoxCollider2D>().enabled = false;
+        moveVec = -moveVec.normalized;
         SetTimer(StateType.Bound);
     }
     void BoundUpdate()//バウンド終了時の処理

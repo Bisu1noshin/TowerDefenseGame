@@ -18,6 +18,7 @@ public abstract class BaseUnit : MonoBehaviour
     protected float maxAttackInterval;    //最大攻撃間隔
     protected bool isAlive;
     protected Bar_Enemy_Controller bar;
+    protected float minDist = 1.8f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,7 @@ public abstract class BaseUnit : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (PlayerController.PlayerInstance == null) { return; }
         transform.position += (Vector3)moveVec * Time.deltaTime;
         if (!isAlive) { return; }
         if(bar != null) { bar.SetPosition(transform.position + Vector3.up * 0.5f); }

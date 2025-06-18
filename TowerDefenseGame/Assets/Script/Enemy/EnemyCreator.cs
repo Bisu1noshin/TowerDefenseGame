@@ -2,12 +2,14 @@
 
 public class EnemyCreator : MonoBehaviour
 {
-    GameObject enemy_prefab;
+    GameObject enemy1_prefab;
+    GameObject enemy2_prefab;
     float timer, maxTimer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        enemy_prefab = Resources.Load("enemy/Enemy_Kuma") as GameObject;
+        enemy1_prefab = Resources.Load("enemy/Enemy_Kuma") as GameObject;
+        enemy2_prefab = Resources.Load("enemy/Enemy_Kuma_2") as GameObject;
         SetRandomTimer();
     }
 
@@ -21,13 +23,26 @@ public class EnemyCreator : MonoBehaviour
             timer = 0;
             float x = 9.0f;
             float y = Random.Range(-47, 47) * 0.1f;
-            EnemyAppear(new Vector3(x, y, 0));
+            int r = Random.Range(0, 2);
+            if(r == 0)
+            {
+                Enemy2Appear(new Vector3(x, y, 0));
+            }
+            else
+            {
+                Enemy1Appear(new Vector3(x, y, 0));
+            }
             SetRandomTimer();
         }
     }
-    public void EnemyAppear(Vector3 pos)
+    public void Enemy1Appear(Vector3 pos)
     {
-        GameObject g = Instantiate(enemy_prefab);
+        GameObject g = Instantiate(enemy1_prefab);
+        g.transform.position = pos;
+    }
+    public void Enemy2Appear(Vector3 pos)
+    {
+        GameObject g = Instantiate(enemy2_prefab);
         g.transform.position = pos;
     }
     public void SetRandomTimer()
