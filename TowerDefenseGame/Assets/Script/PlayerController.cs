@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update()
-    {
+    { 
         if (IsAlive == true)
         {
             if (pushing == true)

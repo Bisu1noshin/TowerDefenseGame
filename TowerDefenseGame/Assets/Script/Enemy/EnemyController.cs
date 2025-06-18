@@ -13,7 +13,7 @@ public class EnemyController : BaseUnit
 
     protected override void Setup()
     {
-
+        GetComponent<SpriteRenderer>().sortingOrder = (int)(transform.position.y * 10.0f);
         sm = new StateMachine<StateType, StateTrigger>(StateType.Stand);
         attackRange = GetComponentInChildren<AttackRange_Script>();
         anim = GetComponent<Animator>();
@@ -81,7 +81,7 @@ public class EnemyController : BaseUnit
         sm.AddTransition(StateType.Hit, StateType.Down, StateTrigger.Down);
     }
     void NullUpdate() { /*pass*/ }
-    void IdleUpdate()
+    void IdleUpdate()//
     {
         if (!AllTimerIs0()) { return; }
         moveVec = Vector3.zero;
@@ -104,12 +104,12 @@ public class EnemyController : BaseUnit
             sm.ExecuteTrigger(StateTrigger.Walk);
         }
     }
-    void WalkUpdate()
+    void WalkUpdate()//
     {
         if (!AllTimerIs0()) { return; }
         if (attackRange.CollisionHitPlayer())
         {
-            sm.ExecuteTrigger(StateTrigger.Stand);
+            sm.ExecuteTrigger(StateTrigger.Attack);
         }
         else
         {
@@ -136,7 +136,7 @@ public class EnemyController : BaseUnit
         bar.CrushBar();
         anim.Play("Down", 0, 0);
     }
-    public void EndAttack()
+    public void EndAttack()//
     {
         sm.ExecuteTrigger(StateTrigger.Stand);
     }
@@ -152,33 +152,41 @@ public class EnemyController : BaseUnit
             sm.ExecuteTrigger(StateTrigger.Stand);
         }
     }
-    void DeadUpdate()
+    void DeadUpdate()//
     {
         moveVec = new Vector3(0, 1.0f, 0);
         deadTimer -= Time.deltaTime;
         if (deadTimer <= 0) { Destroy(gameObject); }
     }
 
-    private void AppearLifeBar()
+    private void AppearLifeBar()//
     {
         GameObject prefab = Resources.Load("enemy/Bar_Enemy_Prefab") as GameObject;
         GameObject g = Instantiate(prefab);
         g.transform.SetParent(GameObject.Find("Canvas").transform, false);
         bar = g.GetOrAddComponent<Bar_Enemy_Controller>();
     }
-    void HitUpdate()
+    void HitUpdate()//
     {
         if (AllTimerIs0())
         {
             IsDead();
         }
     }
-    void LifeBarUpdate()
+    void LifeBarUpdate()//
     {
         if (sm.GetState() != StateType.Down)
         {
             bar.SetPosition(transform.position + Vector3.up * 0.5f);
             bar.FillBar((float)HP / maxHP);
+        }
+    }
+    public void Attack()//
+    {
+        GameObject p = GameObject.Find("Player");
+        if(p != null)
+        {
+            p.GetComponent<PlayerController>().Hit(ATK);
         }
     }
 }

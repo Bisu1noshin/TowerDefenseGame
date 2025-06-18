@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class Bar_Enemy_Controller : MonoBehaviour
 {
