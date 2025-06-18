@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Build.Content;
 using UnityEditor.SearchService;
@@ -10,9 +10,9 @@ public partial class TitleSceneManager : MonoBehaviour
 {
     PlayerInput inputActions;
 
-    // ƒCƒ“ƒXƒyƒNƒ^[QÆ‰Â”\•Ï”
+    // ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼å‚ç…§å¯èƒ½å¤‰æ•°
 
-    // ƒCƒ“ƒXƒyƒNƒ^[QÆ•s‰Â•Ï”
+    // ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ãƒ¼å‚ç…§ä¸å¯å¤‰æ•°
     private Vector3 moveVec;
     private bool ChangeSceneFlag;
 
@@ -20,7 +20,7 @@ public partial class TitleSceneManager : MonoBehaviour
 
         inputActions = new PlayerInput();
 
-        // “ü—ÍƒCƒxƒ“ƒg‚ğƒoƒCƒ“ƒh
+        // å…¥åŠ›ã‚¤ãƒ™ãƒ³ãƒˆã‚’ãƒã‚¤ãƒ³ãƒ‰
         {
             inputActions.Title.YesButton.started += OnYes;
             inputActions.Title.YesButton.canceled += ExitYes;
@@ -28,7 +28,7 @@ public partial class TitleSceneManager : MonoBehaviour
             inputActions.Title.NonButton.canceled += ExitNon;
         }
 
-        // ƒCƒ“ƒvƒbƒgƒVƒXƒeƒ€‚ğ—LŒø‰»
+        // ã‚¤ãƒ³ãƒ—ãƒƒãƒˆã‚·ã‚¹ãƒ†ãƒ ã‚’æœ‰åŠ¹åŒ–
         inputActions.Enable();
     }
 
@@ -37,6 +37,7 @@ public partial class TitleSceneManager : MonoBehaviour
         PlayerCnt++;
         if (ChangeSceneFlag) {
 
+            inputActions.Disable();
             SceneManager.LoadScene("MainGame");
         }
     }
@@ -58,7 +59,7 @@ public partial class TitleSceneManager : MonoBehaviour
 
     private Vector3 GetMousePosition(){
 
-        // ƒ}ƒEƒX‚ÌÀ•W‚ğæ“¾
+        // ãƒã‚¦ã‚¹ã®åº§æ¨™ã‚’å–å¾—
         Vector3 mouseVec = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseVec.z = 0;
 
