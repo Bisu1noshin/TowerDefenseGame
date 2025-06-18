@@ -119,22 +119,23 @@ public class Enemy_2Controller : BaseUnit
     void WalkUpdate()
     {
         if (!AllTimerIs0()) { return; }
-        if (attackRange.CollisionHitPlayer())
+        GameObject p = GameObject.Find("Player");
+        if (p != null)
         {
-            sm.ExecuteTrigger(StateTrigger.Stand);
-        }
-        else
-        {
-            if (GameObject.Find("Player") != null)
+            Vector2 dist = (Vector2)(p.transform.position - transform.position);
+            if (dist.magnitude < 1.5f)
             {
-                Vector2 dist = (Vector2)(GameObject.Find("Player").transform.position - transform.position);
-                if (dist.magnitude > 1.5f)
+                moveVec = Vector2.zero;
+            }
+            else
+            {
+                if(dist.magnitude < 3.5f)
                 {
-                    moveVec = dist.normalized;
+                    sm.ExecuteTrigger(StateTrigger.Attack);
                 }
                 else
                 {
-                    moveVec = Vector2.zero;
+                    moveVec = dist.normalized;
                 }
             }
         }
@@ -150,7 +151,7 @@ public class Enemy_2Controller : BaseUnit
     }
     public void EndAttack()
     {
-        sm.ExecuteTrigger(StateTrigger.Stand);
+        sm.ExecuteTrigger(StateTrigger.Bound);
     }
     void IsDead() //ノックバック後の死亡判定
     {
@@ -164,28 +165,28 @@ public class Enemy_2Controller : BaseUnit
             sm.ExecuteTrigger(StateTrigger.Stand);
         }
     }
-    void DeadUpdate()
+    void DeadUpdate()//昇天中のアニメーション処理
     {
         moveVec = new Vector3(0, 1.0f, 0);
         deadTimer -= Time.deltaTime;
         if (deadTimer <= 0) { Destroy(gameObject); }
     }
 
-    private void AppearLifeBar()
+    private void AppearLifeBar()//HPバーの初期化
     {
         GameObject prefab = Resources.Load("enemy/Bar_Enemy_Prefab") as GameObject;
         GameObject g = Instantiate(prefab);
         g.transform.SetParent(GameObject.Find("Canvas").transform, false);
         bar = g.GetOrAddComponent<Bar_Enemy_Controller>();
     }
-    void HitUpdate()
+    void HitUpdate()//ノックバック終了時の処理
     {
         if (AllTimerIs0())
         {
             IsDead();
         }
     }
-    void LifeBarUpdate()
+    void LifeBarUpdate()//HPバーの割合と位置を更新
     {
         if (sm.GetState() != StateType.Down)
         {
@@ -193,20 +194,23 @@ public class Enemy_2Controller : BaseUnit
             bar.FillBar((float)HP / maxHP);
         }
     }
-    void AttackUpdate()
+    void AttackUpdate()//攻撃処理
     {
-        if (!attackRange.CollisionHitPlayer()) { return; }
+        if (!attackRange.CollisionHitPlayer()) { return; }//攻撃成功まで呼び出されない
         GameObject.Find("Player").GetComponent<PlayerController>().Hit(ATK);
     }
-    void BoundStart()
+    void BoundStart()//バウンド開始時の処理
     {
         anim.Play("Down", 0, 0);
         GetComponent<BoxCollider2D>().enabled = false;
+        moveVec = -moveVec;
+        SetTimer(StateType.Bound);
     }
-    void BoundUpdate()
+    void BoundUpdate()//バウンド終了時の処理
     {
         if (!AllTimerIs0()) { return; }
         moveVec = Vector3.zero;
         GetComponent<BoxCollider2D>().enabled = true;
+        sm.ExecuteTrigger(StateTrigger.Stand);
     }
 }
