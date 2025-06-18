@@ -152,6 +152,8 @@ public class Enemy_2Controller : BaseUnit
         GetComponent<SpriteRenderer>().color = Color.blue;
         bar.CrushBar();
         anim.Play("Down", 0, 0);
+
+        ScoreManager.ScoreManagerInstance.AddScore(300);
     }
     public void EndAttack()
     {
