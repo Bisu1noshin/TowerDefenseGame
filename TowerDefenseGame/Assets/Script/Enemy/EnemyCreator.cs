@@ -14,6 +14,7 @@ public class EnemyCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(PlayerController.PlayerInstance == null) { return; }
         timer += Time.deltaTime;
         if (timer > maxTimer)
         {

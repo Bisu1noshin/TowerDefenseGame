@@ -30,6 +30,7 @@ public class EnemyController : BaseUnit
     }
     protected override void UpdateOverrided()
     {
+        if(PlayerController.PlayerInstance == null) { return; }
         LifeBarUpdate();
         sm.Update(Time.deltaTime);
     }
